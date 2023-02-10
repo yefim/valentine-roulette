@@ -47,6 +47,8 @@ function parseMultipartForm(event) {
 
 
 const handler = async (event, _context) => {
+  console.log('here we go...');
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 200,
@@ -56,16 +58,12 @@ const handler = async (event, _context) => {
 
   console.log(event.body);
 
-	const fields = await parseMultipartForm(event);
-
-  console.log(fields);
+	// const fields = await parseMultipartForm(event);
 
   return {
     statusCode: 200,
-    body: JSON.stringify({message: 'hello from vday'}),
+    body: 'Try sending a POST.'
   };
 };
 
 module.exports = {handler};
-
-// export {handler};
