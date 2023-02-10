@@ -60,11 +60,11 @@ const handler = async (event, _context) => {
 
   console.log(event.body);
 
-	// const fields = await parseMultipartForm(event);
+	const fields = await parseMultipartForm(event);
 
   return {
     statusCode: 200,
-    body: `Thanks for sending a POST. ${event.body}`
+    body: `Thanks for sending a POST. ${fields}`
   };
 };
 
