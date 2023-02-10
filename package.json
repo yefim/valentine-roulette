@@ -2,9 +2,9 @@
   "name": "valentine-roulette",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "parcel index.html send.html"
+    "start": "parcel index.html send.html",
+    "build": "parcel build index.html send.html"
   },
   "keywords": [],
   "author": "",
