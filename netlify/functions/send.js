@@ -1,3 +1,5 @@
+const axios = require('axios');
+const FormData = require('form-data');
 const Busboy = require('busboy');
 
 function parseMultipartForm(event) {
@@ -17,9 +19,10 @@ function parseMultipartForm(event) {
     busboy.on(
       "file",
       (fieldname, filestream, filename, _transferEncoding, mimeType) => {
+        console.log('busboy.on(file)');
         // ... we take a look at the file's data ...
         filestream.on("data", (data) => {
-          console.log('don\'t mind me just processing some data...');
+          console.log('filestream.on(data)');
           // ... and write the file's name, type and content into `fields`.
           fields[fieldname] = {
             filename,
@@ -32,17 +35,19 @@ function parseMultipartForm(event) {
 
     // whenever busboy comes across a normal field ...
     busboy.on("field", (fieldName, value) => {
+      console.log('busboy.on(field)');
       // ... we write its value into `fields`.
       fields[fieldName] = value;
     });
 
     // once busboy is finished, we resolve the promise with the resulted fields.
     busboy.on("finish", () => {
+      console.log('busboy.on(finish)');
       resolve(fields)
     });
 
     // now that all handlers are set up, we can finally start processing our request!
-    busboy.write(event.body);
+    busboy.end(Buffer.from(event.body, 'base64'));
   });
 }
 
@@ -59,13 +64,24 @@ const handler = async (event, _context) => {
     };
   }
 
-  console.log(event.body);
+  const fields = await parseMultipartForm(event);
+  const { filename, content } = fields.file;
 
-	const fields = await parseMultipartForm(event);
+  const formData = new FormData();
+  formData.append('file', content, filename);
+
+  /*
+  const result = await axios.post('url', formData, {
+    maxBodyLength: Infinity,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  */
 
   return {
     statusCode: 200,
-    body: `Thanks for sending a POST. ${fields}`
+    body: 'Thanks for sending a POST.'
   };
 };
 
