@@ -14,7 +14,7 @@
         <p>
           Who said Valentine's Day is just for kids and couples?<br>We think everyone deserves to feel some love. So, we're bringing a one-for-one valentine exchange to the world.
         </p>
-        <a href="#">Send a valentine</a>
+        <a class="button" href="#">Send a valentine</a>
       </section>
       <section class="howto">
         <h2>How does this work?</h2>
@@ -46,18 +46,15 @@
       <section class="share">
         <h2>Share the love</h2>
         <p>The world can never have enough of it.</p>
-        <button class="share-button">Tell your friends</button>
+        <button class="share-button button">Tell your friends</button>
       </section>
     </main>
     <script>
       document.querySelector('.share-button').addEventListener('click', (e) => {
         navigator.share({title: 'yefim', text: 'yef', url: 'https://yef.im'})
           .then(() => {
-            console.log('shared....');
           })
-          .catch((err) => {
-            console.log('Unsuccessful share');
-            error.textContent = 'Share failed: ' + err.message;
+          .catch((_err) => {
           });
       });
     </script>
