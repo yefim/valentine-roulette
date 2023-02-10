@@ -1,0 +1,91 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+}
+
+main {
+  // max-width: 960px;
+  margin: 0 auto;
+}
+
+section.top {
+  background: coral;
+  display: flex;
+  flex-direction: column;
+  // height: 430px;
+  // justify-content: center;
+  padding: 70px 0;
+
+  h1 {
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  p {
+    font-size: 20px;
+    color: white;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+    text-align: center;
+  }
+
+  a {
+    display: block;
+    text-decoration: none;
+    background: #000;
+    color: white;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 20px;
+    margin: 0 auto;
+  }
+}
+
+section.howto {
+  display: flex;
+  flex-direction: column;
+  padding: 100px 0;
+
+  h2 {
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  p {
+    margin: 0 auto;
+  }
+
+  .steps {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+section.share {
+  h2 {
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  p {
+    margin: 0 auto;
+  }
+}
