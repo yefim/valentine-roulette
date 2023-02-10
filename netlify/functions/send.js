@@ -1,4 +1,4 @@
-import * as Busboy from "busboy"
+const Busboy = require('busboy');
 
 function parseMultipartForm(event) {
   return new Promise((resolve) => {
@@ -54,7 +54,9 @@ const handler = async (event, _context) => {
     };
   }
 
-	const fields = await parseMultipartForm(event)
+  console.log(event.body);
+
+	const fields = await parseMultipartForm(event);
 
   console.log(fields);
 
@@ -64,4 +66,6 @@ const handler = async (event, _context) => {
   };
 };
 
-export {handler};
+module.exports = {handler};
+
+// export {handler};
