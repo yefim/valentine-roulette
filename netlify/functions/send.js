@@ -49,6 +49,8 @@ function parseMultipartForm(event) {
 const handler = async (event, _context) => {
   console.log('here we go...');
 
+  console.log(event.httpMethod);
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 200,
