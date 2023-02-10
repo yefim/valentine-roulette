@@ -1,4 +1,6 @@
 const axios = require('axios');
+const shortid = require('shortid');
+const AWS = require('aws-sdk');
 const FormData = require('form-data');
 const Busboy = require('busboy');
 
@@ -54,9 +56,6 @@ function parseMultipartForm(event) {
 
 const handler = async (event, _context) => {
   console.log('here we go...');
-
-  console.log(event.httpMethod);
-
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 200,
@@ -64,11 +63,35 @@ const handler = async (event, _context) => {
     };
   }
 
+  // Parse the request body.
   const fields = await parseMultipartForm(event);
+
+  if (!fields.file || !fields.phonenumber || fields.phonenumber.match(/\d/g).length !== 10) {
+    return {
+      statusCode: 400,
+      body: 'Please send file and phonenumber.'
+    };
+  }
+
+  const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  });
   const { filename, content } = fields.file;
 
   const formData = new FormData();
   formData.append('file', content, filename);
+
+	const result = await s3.upload({
+		Bucket: 'valentine-roulette',
+		Key: `${fields.phonenumber}---${shortid.generate()}.wav`,
+		Body: JSON.stringify({ hello: "world" }),
+		ACL: 'private',
+		ContentEncoding: "utf8", // required
+		ContentType: `application/json`,
+	}).promise();
+
+
 
   /*
   const result = await axios.post('url', formData, {
