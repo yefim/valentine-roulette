@@ -82,14 +82,14 @@ const handler = async (event, _context) => {
   const formData = new FormData();
   formData.append('file', content, filename);
 
-	const result = await s3.upload({
-		Bucket: 'valentine-roulette',
-		Key: `${fields.phonenumber}---${shortid.generate()}.wav`,
-		Body: JSON.stringify({ hello: "world" }),
-		ACL: 'private',
-		ContentEncoding: "utf8", // required
-		ContentType: `application/json`,
-	}).promise();
+  const result = await s3.upload({
+    Bucket: 'valentine-roulette',
+    Key: `${fields.phonenumber}---${shortid.generate()}.wav`,
+    Body: JSON.stringify({ hello: "world" }),
+    ACL: 'private',
+    ContentEncoding: "utf8", // required
+    ContentType: `application/json`,
+  }).promise();
 
 
 
