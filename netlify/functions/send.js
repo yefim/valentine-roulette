@@ -1,5 +1,5 @@
 const axios = require('axios');
-const shortid = require('shortid');
+const nanoid = require('nanoid');
 const AWS = require('aws-sdk');
 const FormData = require('form-data');
 const Busboy = require('busboy');
@@ -84,7 +84,7 @@ const handler = async (event, _context) => {
 
   const result = await s3.upload({
     Bucket: 'valentine-roulette',
-    Key: `${fields.phonenumber}---${shortid.generate()}.wav`,
+    Key: `${fields.phonenumber}---${nanoid()}.wav`,
     Body: JSON.stringify({ hello: "world" }),
     ACL: 'private',
     ContentEncoding: "utf8", // required
