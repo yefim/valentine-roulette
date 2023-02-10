@@ -19,6 +19,7 @@ function parseMultipartForm(event) {
       (fieldname, filestream, filename, _transferEncoding, mimeType) => {
         // ... we take a look at the file's data ...
         filestream.on("data", (data) => {
+          console.log('don\'t mind me just processing some data...');
           // ... and write the file's name, type and content into `fields`.
           fields[fieldname] = {
             filename,
@@ -68,4 +69,4 @@ const handler = async (event, _context) => {
   };
 };
 
-module.exports = {handler};
+module.exports.handler = handler;
