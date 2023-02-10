@@ -1,7 +1,5 @@
-const axios = require('axios');
-const nanoid = require('nanoid');
 const AWS = require('aws-sdk');
-const FormData = require('form-data');
+const uuid = require('uuid');
 const Busboy = require('busboy');
 
 function parseMultipartForm(event) {
@@ -77,19 +75,21 @@ const handler = async (event, _context) => {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   });
+  /*
   const { filename, content } = fields.file;
 
   const formData = new FormData();
   formData.append('file', content, filename);
+  */
 
   const result = await s3.upload({
     Bucket: 'valentine-roulette',
-    Key: `${fields.phonenumber}---${nanoid()}.wav`,
-    Body: JSON.stringify({ hello: "world" }),
+    Key: `${fields.phonenumber}---${uuid.v4()}.wav`,
+    Body: fields.file.content,
     ACL: 'private',
-    ContentEncoding: "utf8", // required
-    ContentType: `application/json`,
   }).promise();
+
+  console.log(result);
 
 
 
