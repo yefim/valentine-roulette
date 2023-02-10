@@ -72,8 +72,8 @@ const handler = async (event, _context) => {
   }
 
   const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
   });
   /*
   const { filename, content } = fields.file;
