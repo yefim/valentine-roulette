@@ -250,7 +250,7 @@ section.send-top {
 }
 
 section.phonenumber {
-  padding: 40px 0 20px 0;
+  padding: 50px 0 40px 0;
 
   h2 {
     font-family: 'Poppins', Helvetica, sans-serif;
@@ -290,15 +290,58 @@ section.phonenumber {
   }
 }
 
+section.record {
+  background: coral;
+  background: url('./images/header-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  padding: 30px 0 60px 0;
+
+
+  h2 {
+    color: white;
+    font-family: 'Poppins', Helvetica, sans-serif;
+    font-size: 35px;
+    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: white;
+    margin: 0 auto 36px auto;
+    font-family: 'Montagu Slab', serif;
+    font-size: 18px;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  .record-button {
+    background: 0;
+    border: 0;
+
+    span {
+      color: black;
+      font-family: 'Poppins', Helvetica, sans-serif;
+      font-size: 18px;
+    }
+
+    margin-bottom: 20px;
+  }
+
+  button[type="submit"] {
+    margin: 0 auto;
+  }
+}
+
 
 form.send {
   .record-button,
   .stop-button,
   .play-button {
     display: block;
-    padding: 20px;
     appearance: none;
-    font-size: 20px;
-    margin-bottom: 20px;
   }
 }

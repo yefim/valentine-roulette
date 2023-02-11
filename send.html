@@ -30,14 +30,25 @@
             </div>
           </section>
 
-          <input style="display: none;" type="file" name="file">
+          <section class="record">
+            <h2>
+              Record a voice note
+            </h2>
+            <p>Say something nice! Give compliment or an affirmation. Read a poem. Tell a love story. Sing a song. Anything that will spread some good, old-fashioned love.
+            </p>
 
-          <button type="button" class="record-button">Record</button>
-          <button type="button" style="display: none" class="stop-button">Stop</button>
-          
-          <audio style="display: none" controls="true"></audio>
+            <input style="display: none;" type="file" name="file">
 
-          <button type="submit" class="button">Send Valentine</button>
+            <button type="button" class="record-button">
+              <span>Tap to record</span>
+              <img width="270" height="270" src="./images/mic.png" alt="microphone">
+            </button>
+
+            <button type="button" style="display: none" class="stop-button">Stop</button>
+            <audio style="display: none" controls="true"></audio>
+
+            <button type="submit" class="button">Send the love</button>
+          </section>
         </form>
       </div>
     </main>
