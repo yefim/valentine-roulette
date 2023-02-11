@@ -2,21 +2,45 @@
 <html lang="en">
   <head>
     <title>Valentine Roulette</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Montagu+Slab:opsz,wght@16..144,600&family=Poppins:wght@900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="styles.scss">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <form class="send" method="post" action="/.netlify/functions/send" enctype="multipart/form-data">
-      <input name="phonenumber" type="tel" autocomplete="tel" placeholder="212-333-3333">
-      <input style="display: none;" type="file" name="file">
+    <main>
+      <section class="top">
+        <img height="120" width="120" src="./images/roulette-logo.png" alt="">
+        <h1>Voice your Valentine</h1>
+        <p>Craft your valentine and send it out. Get started below.</p>
+      </section>
+      <div class="send-form">
+        <form class="send" method="post"
+              action="/.netlify/functions/send" enctype="multipart/form-data">
 
-      <button type="button" class="record-button">Record</button>
-      <button type="button" style="display: none" class="stop-button">Stop</button>
-      
-      <audio style="display: none" controls="true"></audio>
+          <section class="phonenumber">
+            <h2>What's your number?</h2>
+            <p>You're going to get a valentine, so put your number in.</p>
+            <div class="input">
+              <span>+1</span>
+              <input name="phonenumber" type="tel" autocomplete="tel" placeholder="333-333-3333">
+            </div>
+          </section>
 
-      <button type="submit" class="button">Send Valentine</button>
-    </form>
+          <input style="display: none;" type="file" name="file">
+
+          <button type="button" class="record-button">Record</button>
+          <button type="button" style="display: none" class="stop-button">Stop</button>
+          
+          <audio style="display: none" controls="true"></audio>
+
+          <button type="submit" class="button">Send Valentine</button>
+        </form>
+      </div>
+    </main>
 
     <script src="https://valentineroulette.com/public/recorder.js"></script>
     <script type="module" src="send.js"></script>

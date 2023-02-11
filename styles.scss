@@ -236,14 +236,62 @@ section.creators {
   }
 }
 
-form.send {
-  padding: 20px;
+section.send-top {
+  background: coral;
+  background: url('./images/header-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  display: flex;
+  flex-direction: column;
+  // height: 430px;
+  // justify-content: center;
+  padding: 40px 0 70px 0;
+}
 
-  input[type="tel"] {
-    font-size: 20px;
-    margin-bottom: 12px;
+section.phonenumber {
+  padding: 40px 0 20px 0;
+
+  h2 {
+    font-family: 'Poppins', Helvetica, sans-serif;
+    font-size: 35px;
+    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
   }
 
+  p {
+    margin: 0 auto 36px auto;
+    font-family: 'Montagu Slab', serif;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  div.input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    span {
+      font-family: 'Montagu Slab', serif;
+      font-size: 30px;
+    }
+  }
+
+  input[type="tel"] {
+    border: 3px solid black;
+    border-radius: 0;
+    appearance: none;
+    font-size: 22px;
+    padding: 4px 8px;
+    width: 280px;
+  }
+}
+
+
+form.send {
   .record-button,
   .stop-button,
   .play-button {
