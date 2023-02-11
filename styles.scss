@@ -50,7 +50,12 @@ section.top {
   flex-direction: column;
   // height: 430px;
   // justify-content: center;
-  padding: 70px 0;
+  padding: 40px 0 70px 0;
+
+  img {
+    display: block;
+    margin: 0 auto 12px auto;
+  }
 
   h1 {
     font-family: 'Poppins', Helvetica, sans-serif;
