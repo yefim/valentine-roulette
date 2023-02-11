@@ -1,29 +1,6 @@
 // import Recorder from './recorder';
+import {BinaryFileReader} from './binary-file-reader';
 const Recorder = window.Recorder || null;
-
-const BinaryFileReader = {
-  read: function(file, callback) {
-    var reader = new FileReader();
-
-    var fileInfo = {
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      file: null
-    };
-
-    reader.onload = function() {
-      fileInfo.file = new Uint8Array(reader.result);
-      callback(null, fileInfo);
-    }
-
-    reader.onerror = function() {
-      callback(reader.error);
-    }
-
-    reader.readAsArrayBuffer(file);
-  }
-}
 
 const $recordButton = document.querySelector('.record-button');
 const $stopButton = document.querySelector('.stop-button');
@@ -81,7 +58,9 @@ $stopButton.addEventListener('click', (_e) => {
   recorder.stop();
   recorder.exportWAV((blob) => {
     console.log('exportWAV...');
+    document.querySelector('audio').src = window.URL.createObjectURL(blob);
 
+    /*
     BinaryFileReader.read(blob, (_err, audioFile) => {
       audioContext.decodeAudioData(audioFile.file.buffer, (buffer) => {
         const source = audioContext.createBufferSource();
@@ -94,6 +73,8 @@ $stopButton.addEventListener('click', (_e) => {
       });
       recorder.clear();
     });
+    */
+
   });
 
   /*
