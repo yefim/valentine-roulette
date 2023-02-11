@@ -14,6 +14,9 @@ let audioContext = null;
 let recorder = null;
 
 $recordButton.addEventListener('click', async (_e) => {
+  $recordButton.style.display = 'none';
+  $stopButton.style.display = 'block';
+
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
   audioContext = new AudioContext();
   recorder = new Recorder(
@@ -55,6 +58,8 @@ $stopButton.addEventListener('click', (_e) => {
   recorder.stop();
   recorder.exportWAV((blob) => {
     console.log('exportWAV...');
+
+    document.querySelector('audio').style.display = 'unset';
     document.querySelector('audio').src = window.URL.createObjectURL(blob);
 
     audioStream && audioStream.getTracks().forEach((track) => {
