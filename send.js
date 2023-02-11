@@ -10,27 +10,25 @@ let audioStream = null;
 let mediaRecorder = null;
 let audioBlobs = [];
 
-$recordButton.addEventListener('click', (_e) => {
-  navigator.mediaDevices.getUserMedia({audio: true, video: false}).then((stream) => {
-    audioStream = stream;
-    mediaRecorder = new MediaRecorder(stream, {mimeType: 'audio/webm; codecs=opus'});
+$recordButton.addEventListener('click', async (_e) => {
+  audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+  mediaRecorder = new MediaRecorder(audioStream);
+  audioBlobs = [];
+
+  mediaRecorder.addEventListener('dataavailable', (event) => {
+    audioBlobs.push(event.data);
+  });
+
+  mediaRecorder.addEventListener('stop', () => {
+    audioBlob = new Blob(audioBlobs, {mimeType: mediaRecorder.mimeType});
     audioBlobs = [];
 
-    mediaRecorder.addEventListener('dataavailable', (event) => {
-      audioBlobs.push(event.data);
-    });
-
-    mediaRecorder.addEventListener('stop', () => {
-      audioBlob = new Blob(audioBlobs);
-      audioBlobs = [];
-
-      document.querySelector('audio').src = window.URL.createObjectURL(audioBlob);
-      // const f = new File([audioBlob], "record.opus");
-      console.log(audioBlob);
-    });
-
-    mediaRecorder.start();
+    document.querySelector('audio').src = window.URL.createObjectURL(audioBlob);
+    // const f = new File([audioBlob], "record.opus");
+    console.log(audioBlob);
   });
+
+  mediaRecorder.start();
 });
 
 $stopButton.addEventListener('click', (_e) => {
