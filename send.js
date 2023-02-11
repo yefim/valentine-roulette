@@ -7,6 +7,7 @@ const $stopButton = document.querySelector('.stop-button');
 const $playButton = document.querySelector('.play-button');
 
 const $form = document.querySelector('form');
+const $fileInput = $form.querySelector('[type="file"]');
 const $submitButton = $form.querySelector('[type="submit"]');
 
 let audioBlob = null;
@@ -60,6 +61,13 @@ $stopButton.addEventListener('click', (_e) => {
     console.log('exportWAV...');
     document.querySelector('audio').src = window.URL.createObjectURL(blob);
 
+    recorder.clear();
+
+    const file = new File([blob], 'audio.wav');
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    $fileInput.files = dataTransfer.files;
+
     /*
     BinaryFileReader.read(blob, (_err, audioFile) => {
       audioContext.decodeAudioData(audioFile.file.buffer, (buffer) => {
@@ -76,19 +84,11 @@ $stopButton.addEventListener('click', (_e) => {
     */
 
   });
-
-  /*
-  mediaRecorder && mediaRecorder.stop();
-
-  audioStream && audioStream.getTracks().forEach((track) => {
-    track.stop();
-  });
-  */
 });
 
 $form.addEventListener('submit', (e) => {
   $submitButton.disabled = true;
-  e.preventDefault();
+  // e.preventDefault();
 
   // loading animation
   console.log('submitting...');
