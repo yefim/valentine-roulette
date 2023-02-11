@@ -20,6 +20,7 @@ $recordButton.addEventListener('click', async (_e) => {
   });
 
   mediaRecorder.addEventListener('stop', () => {
+    console.log('mimeType', mediaRecorder.mimeType);
     audioBlob = new Blob(audioBlobs, {mimeType: mediaRecorder.mimeType});
     audioBlobs = [];
 
