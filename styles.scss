@@ -29,6 +29,7 @@ main {
 }
 
 .button {
+  border: 0;
   display: block;
   text-decoration: none;
   background: #000;
@@ -46,6 +47,7 @@ section.top {
   background: url('./images/header-bg.png');
   background-size: cover;
   background-repeat: no-repeat;
+  background-position: center center;
   display: flex;
   flex-direction: column;
   // height: 430px;
@@ -86,7 +88,7 @@ section.top {
 section.howto {
   display: flex;
   flex-direction: column;
-  padding: 40px 0 100px 0;
+  padding: 40px 0 20px 0;
 
   h2 {
     font-family: 'Poppins', Helvetica, sans-serif;
@@ -98,7 +100,7 @@ section.howto {
   }
 
   p {
-    margin: 0 auto;
+    margin: 0 auto 36px auto;
     font-family: 'Montagu Slab', serif;
     text-align: center;
     padding: 0 20px;
@@ -112,7 +114,7 @@ section.howto {
 
     img {
       display: block;
-      margin: 0 auto;
+      margin: 0 auto 24px auto;
     }
 
     h3 {
@@ -121,6 +123,7 @@ section.howto {
       line-height: 1;
       text-transform: uppercase;
       text-align: center;
+      margin-bottom: 8px;
     }
 
     p {
@@ -130,13 +133,28 @@ section.howto {
 }
 
 section.share {
+  background: coral;
+  background: url('./images/share-bg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  padding: 100px 0;
+
   h2 {
+    color: white;
+    font-family: 'Poppins', Helvetica, sans-serif;
+    font-size: 35px;
+    line-height: 1;
     text-transform: uppercase;
     text-align: center;
   }
 
-  p {
-    margin: 0 auto;
+  h3 {
+    font-family: 'Montagu Slab', serif;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 40px;
+    text-align: center;
   }
 
   .share-button {
