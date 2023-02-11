@@ -236,19 +236,6 @@ section.creators {
   }
 }
 
-section.send-top {
-  background: coral;
-  background: url('./images/header-bg.png');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  display: flex;
-  flex-direction: column;
-  // height: 430px;
-  // justify-content: center;
-  padding: 40px 0 70px 0;
-}
-
 section.phonenumber {
   padding: 50px 0 40px 0;
 
@@ -315,7 +302,7 @@ section.record {
     font-family: 'Montagu Slab', serif;
     font-size: 18px;
     text-align: center;
-    padding: 0 20px;
+    padding: 0 16px;
   }
 
   .record-button {
