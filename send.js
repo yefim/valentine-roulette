@@ -4,18 +4,14 @@ const Recorder = window.Recorder || null;
 
 const $recordButton = document.querySelector('.record-button');
 const $stopButton = document.querySelector('.stop-button');
-const $playButton = document.querySelector('.play-button');
 
 const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
 const $submitButton = $form.querySelector('[type="submit"]');
 
-let audioBlob = null;
 let audioStream = null;
 let audioContext = null;
-let mediaRecorder = null;
 let recorder = null;
-let audioBlobs = [];
 
 $recordButton.addEventListener('click', async (_e) => {
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
@@ -60,6 +56,10 @@ $stopButton.addEventListener('click', (_e) => {
   recorder.exportWAV((blob) => {
     console.log('exportWAV...');
     document.querySelector('audio').src = window.URL.createObjectURL(blob);
+
+    audioStream && audioStream.getTracks().forEach((track) => {
+      track.stop();
+    });
 
     recorder.clear();
 
