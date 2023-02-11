@@ -19,12 +19,19 @@ $recordButton.addEventListener('click', async (_e) => {
     audioBlobs.push(event.data);
   });
 
-  mediaRecorder.addEventListener('stop', () => {
+  mediaRecorder.addEventListener('stop', async () => {
     console.log('mimeType', mediaRecorder.mimeType);
     audioBlob = new Blob(audioBlobs, {mimeType: mediaRecorder.mimeType});
     audioBlobs = [];
 
-    document.querySelector('audio').src = window.URL.createObjectURL(audioBlob);
+    const context = new AudioContext();
+    const source = context.createBufferSource();
+    source.buffer = Buffer.from(await audioBlob.arrayBuffer());
+    source.loop = true;
+    source.connect(context.destination);
+    source.start(0);
+
+    // document.querySelector('audio').src = window.URL.createObjectURL(audioBlob);
     // const f = new File([audioBlob], "record.opus");
     console.log(audioBlob);
   });
