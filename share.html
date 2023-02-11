@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Valentine Roulette</title>
+    <link rel="stylesheet" href="styles.scss">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <main>
+      <h1>Share the love</h1>
+      <p>Thanks for spreading the love! Now share it with more of your friends so we can make sure everyone is happy.</p>
+      <button class="share-button button">Tell your friends</button>
+    </main>
+
+    <script>
+      document.querySelector('.share-button').addEventListener('click', (e) => {
+        navigator.share({title: 'Valentine Roulette', text: '', url: 'https://valentineroulette.com'})
+          .then(() => {
+          })
+          .catch((_err) => {
+          });
+      });
+    </script>
+  </body>
+</html>

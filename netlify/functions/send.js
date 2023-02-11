@@ -75,12 +75,6 @@ const handler = async (event, _context) => {
     accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
   });
-  /*
-  const { filename, content } = fields.file;
-
-  const formData = new FormData();
-  formData.append('file', content, filename);
-  */
 
   const result = await s3.upload({
     Bucket: 'valentine-roulette',
@@ -91,20 +85,11 @@ const handler = async (event, _context) => {
 
   console.log(result);
 
-
-
-  /*
-  const result = await axios.post('url', formData, {
-    maxBodyLength: Infinity,
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  });
-  */
-
   return {
-    statusCode: 200,
-    body: 'Thanks for sending a POST.'
+    statusCode: 302,
+    headers: {
+      location: '/share.html'
+    }
   };
 };
 

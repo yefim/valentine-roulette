@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "parcel index.html send.html",
-    "build": "parcel build index.html send.html"
+    "start": "parcel index.html send.html share.html",
+    "build": "parcel build index.html send.html share.html"
   },
   "keywords": [],
   "author": "",
