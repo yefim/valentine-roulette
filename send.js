@@ -1,3 +1,30 @@
+// import Recorder from './recorder';
+const Recorder = window.Recorder || null;
+
+const BinaryFileReader = {
+  read: function(file, callback) {
+    var reader = new FileReader();
+
+    var fileInfo = {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      file: null
+    };
+
+    reader.onload = function() {
+      fileInfo.file = new Uint8Array(reader.result);
+      callback(null, fileInfo);
+    }
+
+    reader.onerror = function() {
+      callback(reader.error);
+    }
+
+    reader.readAsArrayBuffer(file);
+  }
+}
+
 const $recordButton = document.querySelector('.record-button');
 const $stopButton = document.querySelector('.stop-button');
 const $playButton = document.querySelector('.play-button');
@@ -7,11 +34,21 @@ const $submitButton = $form.querySelector('[type="submit"]');
 
 let audioBlob = null;
 let audioStream = null;
+let audioContext = null;
 let mediaRecorder = null;
+let recorder = null;
 let audioBlobs = [];
 
 $recordButton.addEventListener('click', async (_e) => {
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+  audioContext = new AudioContext();
+  recorder = new Recorder(
+    audioContext.createMediaStreamSource(audioStream),
+    {numChannels: 1}
+  );
+  recorder.record();
+
+  /*
   mediaRecorder = new MediaRecorder(audioStream);
   audioBlobs = [];
 
@@ -37,14 +74,35 @@ $recordButton.addEventListener('click', async (_e) => {
   });
 
   mediaRecorder.start();
+  */
 });
 
 $stopButton.addEventListener('click', (_e) => {
+  recorder.stop();
+  recorder.exportWAV((blob) => {
+    console.log('exportWAV...');
+
+    BinaryFileReader.read(blob, (_err, audioFile) => {
+      audioContext.decodeAudioData(audioFile.file.buffer, (buffer) => {
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.loop = true;
+        source.connect(audioContext.destination);
+        source.start(0);
+      }, (err) => {
+        console.log(err);
+      });
+      recorder.clear();
+    });
+  });
+
+  /*
   mediaRecorder && mediaRecorder.stop();
 
   audioStream && audioStream.getTracks().forEach((track) => {
     track.stop();
   });
+  */
 });
 
 $form.addEventListener('submit', (e) => {
