@@ -319,6 +319,10 @@ section.record {
   }
 
   .record-button {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: center;
     background: 0;
     border: 0;
 
@@ -339,7 +343,6 @@ section.record {
 
 
 form.send {
-  .record-button,
   .stop-button,
   .play-button {
     display: block;
