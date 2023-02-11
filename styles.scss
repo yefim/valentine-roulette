@@ -86,15 +86,22 @@ section.top {
 section.howto {
   display: flex;
   flex-direction: column;
-  padding: 100px 0;
+  padding: 40px 0 100px 0;
 
   h2 {
+    font-family: 'Poppins', Helvetica, sans-serif;
+    font-size: 35px;
+    line-height: 1;
     text-transform: uppercase;
     text-align: center;
+    margin-bottom: 16px;
   }
 
   p {
     margin: 0 auto;
+    font-family: 'Montagu Slab', serif;
+    text-align: center;
+    padding: 0 20px;
   }
 
   .steps {
@@ -102,6 +109,23 @@ section.howto {
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+
+    img {
+      display: block;
+      margin: 0 auto;
+    }
+
+    h3 {
+      font-family: 'Poppins', Helvetica, sans-serif;
+      font-size: 30px;
+      line-height: 1;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    p {
+      font-family: 'Montagu Slab', serif;
+    }
   }
 }
 
