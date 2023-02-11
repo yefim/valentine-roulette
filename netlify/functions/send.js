@@ -88,7 +88,7 @@ const handler = async (event, _context) => {
   return {
     statusCode: 302,
     headers: {
-      location: '/share.html'
+      location: 'https://valentineroulette.com/share.html'
     }
   };
 };
