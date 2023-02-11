@@ -98,3 +98,12 @@ section.share {
     appearance: none;
   }
 }
+
+form.send {
+  .record-button,
+  .stop-button,
+  .play-button {
+    display: block;
+    padding: 20px;
+  }
+}

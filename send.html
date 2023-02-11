@@ -6,11 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <form method="post" action="/.netlify/functions/send" enctype="multipart/form-data">
+    <form class="send" method="post" action="/.netlify/functions/send" enctype="multipart/form-data">
       <input name="phonenumber" type="tel" autocomplete="tel" placeholder="212-333-3333">
-      <input type="file" name="file">
-      <button type="button">Record</button>
-      <button type="submit">Send</button>
+      <input style="display: none;" type="file" name="file">
+
+      <button type="button" class="record-button">Record</button>
+      <button type="button" class="stop-button">Stop</button>
+      <button type="button" class="play-button">Play</button>
+      
+      <audio controls="true"></audio>
+
+      <button type="submit" class="button">Send Valentine</button>
     </form>
     <script src="send.js"></script>
   </body>
