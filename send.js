@@ -116,6 +116,11 @@ for (const $fun of document.querySelectorAll('.fun')) {
 }
 
 $form.addEventListener('submit', (e) => {
+  if (!e.target.elements.file.value) {
+    e.preventDefault();
+    return false;
+  }
+
   $submitButton.disabled = true;
 
   // e.preventDefault();
