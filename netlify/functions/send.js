@@ -88,7 +88,7 @@ const handler = async (event, _context) => {
   return {
     statusCode: 302,
     headers: {
-      Location: 'https://valentineroulette.com/share.html',
+      Location: 'https://valentineroulette.com/share',
       'Cache-Control': 'no-cache'
     },
     body: JSON.stringify({})
