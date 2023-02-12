@@ -432,6 +432,7 @@ body.share-page {
   opacity: 0;
   position: absolute;
   animation: hearts 3s ease-in infinite;
+  pointer-events: none;
 }
 
 @keyframes hearts {
