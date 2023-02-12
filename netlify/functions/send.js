@@ -67,7 +67,7 @@ const handler = async (event, _context) => {
   if (!fields.file || !fields.phonenumber || fields.phonenumber.match(/\d/g).length !== 10) {
     return {
       statusCode: 400,
-      body: 'Please send file and phonenumber.'
+      body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.'
     };
   }
 
