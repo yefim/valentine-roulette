@@ -43,7 +43,7 @@
         <p>
           Who said Valentine's Day is just for kids and couples? We think everyone deserves to feel some love. So, we're bringing a one-for-one valentine exchange to the world.
         </p>
-        <a class="button" href="/send.html">Make a valentine</a>
+        <a class="fun button" href="/send.html">Make a valentine</a>
       </section>
       <section class="howto">
         <h2>How does this work?</h2>
@@ -62,12 +62,12 @@
         </div>
       </section>
       <section class="ready-cta" style="padding: 0 0 40px 0;">
-        <a class="button pink-button" href="/send.html">Make a valentine</a>
+        <a class="fun button pink-button" href="/send.html">Make a valentine</a>
       </section>
       <section class="share">
         <h2>Share the love</h2>
         <h3>The world could never have enough of it.</h3>
-        <button class="share-button button">Tell your friends</button>
+        <button class="fun share-button button">Tell your friends</button>
       </section>
       <section class="creators">
         <h2>Created with love from,</h2>
@@ -121,11 +121,21 @@
       </section>
       <section class="ready-cta" style="padding: 40px 0 100px 0;">
         <h2>Spread some good old-fashioned love</h2>
-        <a class="button pink-button" href="/send.html">Make a valentine</a>
+        <a class="fun button pink-button" href="/send.html">Make a valentine</a>
       </section>
     </main>
-    <script>
+    <script type="module">
+      import {createHearts} from './hearts';
+
+      for (const $fun of document.querySelectorAll('.fun')) {
+        $fun.addEventListener('click', (e) => {
+          createHearts(e.target);
+        });
+      }
+
       document.querySelector('.share-button').addEventListener('click', (e) => {
+        if (!navigator.share) return;
+
         navigator.share({title: 'Send & receive love', url: 'https://valentineroulette.com'})
           .then(() => {
           })

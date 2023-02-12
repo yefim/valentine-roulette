@@ -423,3 +423,28 @@ body.share-page {
     }
   }
 }
+
+.fun {
+  position: relative;
+}
+
+.heart-particle {
+  opacity: 0;
+  position: absolute;
+  animation: hearts 3s ease-in infinite;
+}
+
+@keyframes hearts {
+  0% {
+    opacity: 0;
+		transform: translate(0, 0%) rotate(0deg);
+  }
+  20% {
+    opacity: 0.8;
+		transform: translate(0, -20%) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+		transform: translate(0, -1000%) rotate(0deg);
+  }
+}

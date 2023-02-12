@@ -1,3 +1,5 @@
+import {createHearts} from './hearts';
+
 const Recorder = window.Recorder || null; // comes from external JS
 
 const STATES = {
@@ -100,8 +102,15 @@ $recordButton.addEventListener('click', async (_e) => {
   }
 });
 
+for (const $fun of document.querySelectorAll('.fun')) {
+  $fun.addEventListener('click', (e) => {
+    createHearts(e.target);
+  });
+}
+
 $form.addEventListener('submit', (e) => {
   $submitButton.disabled = true;
+
   // e.preventDefault();
 
   // loading animation
