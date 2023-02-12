@@ -13,9 +13,11 @@ let currentState = STATES.initial;
 
 const $recordButton = document.querySelector('.record-button');
 const $recordImg = $recordButton.querySelector('img');
+const $pulse = $recordButton.querySelector('.pulse');
 const $playbackAudio = document.querySelector('audio');
 
 $playbackAudio.addEventListener('ended', (_e) => {
+  $pulse.style.display = 'none';
   $recordImg.className = 'play';
   currentState = STATES.finishedRecording;
 });
@@ -30,6 +32,7 @@ let recorder = null;
 
 const startRecording = async () => {
   console.log('startRecording()');
+  $pulse.style.display = 'block';
 
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
 
@@ -47,6 +50,7 @@ const startRecording = async () => {
 const stopRecording = () => {
   console.log('stopRecording()');
   document.querySelector('.yay').style.visibility = 'visible';
+  $pulse.style.display = 'none';
 
   recorder.stop();
 
@@ -78,6 +82,7 @@ const playbackRecording = () => {
   console.log('playbackRecording()');
   $playbackAudio.play();
 
+  $pulse.style.display = 'block';
   currentState = STATES.playing;
   $recordImg.className = 'pause';
 };
@@ -86,6 +91,7 @@ const stopPlayback = () => {
   console.log('stopPlayback()');
   $playbackAudio.pause();
 
+  $pulse.style.display = 'none';
   currentState = STATES.finishedRecording;
   $recordImg.className = 'play';
 };

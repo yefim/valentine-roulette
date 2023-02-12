@@ -328,6 +328,7 @@ section.record {
     background: 0;
     border: 0;
     margin-bottom: 8px;
+    position: relative;
 
     span {
       color: black;
@@ -447,5 +448,25 @@ body.share-page {
   100% {
     opacity: 0;
 		transform: translate(0, -1000%) rotate(0deg);
+  }
+}
+
+
+.pulse {
+  height: 240px;
+  width: 240px;
+  position: absolute;
+  border-radius: 50%;
+  bottom: 0;
+  animation: pulse-animation 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 30px rgba(0, 0, 0, 0);
   }
 }
