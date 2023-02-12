@@ -116,6 +116,18 @@ for (const $fun of document.querySelectorAll('.fun')) {
 }
 
 $form.addEventListener('submit', (e) => {
+  if (currentState === STATES.recording) {
+    e.preventDefault();
+    stopRecording();
+
+    setTimeout(() => {
+      $form.submit();
+    }, 600);
+
+    return false;
+  }
+
+  // If no file, do not submit
   if (!e.target.elements.file.value) {
     e.preventDefault();
     return false;
