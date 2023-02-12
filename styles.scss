@@ -472,3 +472,20 @@ body.share-page {
     box-shadow: 0 0 0 30px rgba(0, 0, 0, 0);
   }
 }
+
+.shake {
+  animation: shake-animation 2s ease-in-out infinite;
+}
+
+@keyframes shake-animation {
+  0%, 10%, 65%, 100% {
+    transform: rotate(0deg) scale(1.0);
+  }
+
+  30%, 40% {
+    transform: rotate(-1deg) scale(1.05);
+  }
+  35%, 45% {
+    transform: rotate(1deg) scale(1.05);
+  }
+}
