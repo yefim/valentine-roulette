@@ -88,8 +88,10 @@ const handler = async (event, _context) => {
   return {
     statusCode: 302,
     headers: {
-      location: 'https://valentineroulette.com/share.html'
-    }
+      Location: 'https://valentineroulette.com/share.html',
+      'Cache-Control': 'no-cache'
+    },
+    body: JSON.stringify({})
   };
 };
 
