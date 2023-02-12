@@ -8,7 +8,6 @@ const STATES = {
 };
 
 let currentState = STATES.initial;
-let lastHit = null;
 
 const $recordButton = document.querySelector('.record-button');
 const $recordImg = $recordButton.querySelector('img');
@@ -90,15 +89,6 @@ const stopPlayback = () => {
 };
 
 $recordButton.addEventListener('click', async (_e) => {
-  const now = new Date().getTime();
-
-  if (lastHit && lastHit + 1000 > now) {
-    console.log('clicking way too fast');
-    return;
-  } else {
-    lastHit = now;
-  }
-
   if (currentState === STATES.initial) {
     startRecording();
   } else if (currentState === STATES.recording) {
