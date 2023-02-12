@@ -56,7 +56,7 @@ const handler = async (event, _context) => {
   console.log('here we go...');
   if (event.httpMethod !== 'POST') {
     return {
-      statusCode: 200,
+      statusCode: 404,
       body: `Try sending a POST. You sent a ${event.httpMethod}.`
     };
   }
