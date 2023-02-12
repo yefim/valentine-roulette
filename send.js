@@ -11,7 +11,12 @@ let currentState = STATES.initial;
 
 const $recordButton = document.querySelector('.record-button');
 const $recordImg = $recordButton.querySelector('img');
-const $stopButton = document.querySelector('.stop-button');
+const $playbackAudio = document.querySelector('audio');
+
+$playbackAudio.addEventListener('ended', (_e) => {
+  $recordImg.className = 'play';
+  currentState = STATES.finishedRecording;
+});
 
 const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
@@ -44,8 +49,10 @@ const stopRecording = () => {
   recorder.exportWAV((blob) => {
     console.log('exportWAV...');
 
-    document.querySelector('audio').style.display = 'unset';
-    document.querySelector('audio').src = window.URL.createObjectURL(blob);
+    $playbackAudio.src = window.URL.createObjectURL(blob);
+    // $playbackAudio.style.display = 'unset';
+    // document.querySelector('audio')
+    // document.querySelector('audio').src = window.URL.createObjectURL(blob);
 
     audioStream && audioStream.getTracks().forEach((track) => {
       track.stop();
@@ -65,6 +72,10 @@ const stopRecording = () => {
 
 const playbackRecording = () => {
   console.log('playbackRecording()');
+  $playbackAudio.play();
+
+  currentState = STATES.playing;
+  $recordImg.className = 'pause';
 };
 
 const stopPlayback = () => {
@@ -81,14 +92,6 @@ $recordButton.addEventListener('click', async (_e) => {
   } else if (currentState === STATES.playing) {
     stopPlayback();
   }
-
-  /*
-  $recordButton.style.display = 'none';
-  $stopButton.style.display = 'block';
-  */
-});
-
-$stopButton.addEventListener('click', (_e) => {
 });
 
 $form.addEventListener('submit', (e) => {
