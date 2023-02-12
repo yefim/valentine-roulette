@@ -73,6 +73,7 @@
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
         if (!navigator.share) {
+          window.location.href = 'https://twitter.com/intent/tweet?url=https%3A%2F%2Fvalentineroulette.com'
           return;
         }
 
