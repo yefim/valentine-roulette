@@ -4,7 +4,7 @@ const STATES = {
   initial: 0,
   recording: 1,
   finishedRecording: 2,
-  playing: 2,
+  playing: 3,
 };
 
 let currentState = STATES.initial;
@@ -81,6 +81,10 @@ const playbackRecording = () => {
 
 const stopPlayback = () => {
   console.log('stopPlayback()');
+  $playbackAudio.pause();
+
+  currentState = STATES.finishedRecording;
+  $recordImg.className = 'play';
 };
 
 $recordButton.addEventListener('click', async (_e) => {
