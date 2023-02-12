@@ -25,6 +25,7 @@ $playbackAudio.addEventListener('ended', (_e) => {
 const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
 const $submitButton = $form.querySelector('[type="submit"]');
+$submitButton.disabled = false; // reset the button to enabled
 
 let audioStream = null;
 let audioContext = null;
