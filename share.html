@@ -72,6 +72,10 @@
       }
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
+        if (!navigator.share) {
+          return;
+        }
+
         navigator.share({title: 'Send & receive love', url: 'https://valentineroulette.com'})
           .then(() => {
           })
