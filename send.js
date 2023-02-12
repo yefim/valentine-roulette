@@ -44,6 +44,7 @@ const startRecording = async () => {
 
 const stopRecording = () => {
   console.log('stopRecording()');
+  document.querySelector('.yay').style.visibility = 'visible';
 
   recorder.stop();
 

@@ -327,7 +327,7 @@ section.record {
     align-items: center;
     background: 0;
     border: 0;
-    margin-bottom: 20px;
+    margin-bottom: 8px;
 
     span {
       color: black;
@@ -352,6 +352,11 @@ section.record {
     img.pause {
       object-position: -720px 0;
     }
+  }
+
+  p.yay {
+    font-size: 20px;
+    margin-bottom: 16px;
   }
 
   button[type="submit"] {
