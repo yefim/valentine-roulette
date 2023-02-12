@@ -92,6 +92,7 @@ const stopRecording = () => {
 
     currentState = STATES.finishedRecording;
     $recordImg.className = 'play';
+    $submitButton.disabled = false;
   });
 };
 
