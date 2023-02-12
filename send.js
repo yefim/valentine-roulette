@@ -30,15 +30,16 @@ const startRecording = async () => {
   console.log('startRecording()');
 
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+
+  currentState = STATES.recording;
+  $recordImg.className = 'stop';
+
   audioContext = new AudioContext();
   recorder = new Recorder(
     audioContext.createMediaStreamSource(audioStream),
     {numChannels: 1}
   );
   recorder.record();
-
-  currentState = STATES.recording;
-  $recordImg.className = 'stop';
 };
 
 const stopRecording = () => {
