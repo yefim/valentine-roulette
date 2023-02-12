@@ -32,12 +32,11 @@ let recorder = null;
 
 const startRecording = async () => {
   console.log('startRecording()');
+  $recordImg.className = 'stop';
   $pulse.style.display = 'block';
+  currentState = STATES.recording;
 
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
-
-  currentState = STATES.recording;
-  $recordImg.className = 'stop';
 
   audioContext = new AudioContext();
   recorder = new Recorder(
