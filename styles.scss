@@ -327,6 +327,7 @@ section.record {
     align-items: center;
     background: 0;
     border: 0;
+    margin-bottom: 20px;
 
     span {
       color: black;
@@ -335,7 +336,22 @@ section.record {
       text-transform: uppercase;
     }
 
-    margin-bottom: 20px;
+    img {
+      object-fit: cover;
+      object-position: 0 0;
+    }
+
+    img.stop {
+      object-position: -240px 0;
+    }
+
+    img.play {
+      object-position: -480px 0;
+    }
+
+    img.pause {
+      object-position: -720px 0;
+    }
   }
 
   button[type="submit"] {

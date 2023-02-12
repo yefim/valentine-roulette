@@ -1,8 +1,16 @@
-// import Recorder from './recorder';
-import {BinaryFileReader} from './binary-file-reader';
-const Recorder = window.Recorder || null;
+const Recorder = window.Recorder || null; // comes from external JS
+
+const STATES = {
+  initial: 0,
+  recording: 1,
+  finishedRecording: 2,
+  playing: 2,
+};
+
+let currentState = STATES.initial;
 
 const $recordButton = document.querySelector('.record-button');
+const $recordImg = $recordButton.querySelector('img');
 const $stopButton = document.querySelector('.stop-button');
 
 const $form = document.querySelector('form');
@@ -13,9 +21,8 @@ let audioStream = null;
 let audioContext = null;
 let recorder = null;
 
-$recordButton.addEventListener('click', async (_e) => {
-  $recordButton.style.display = 'none';
-  $stopButton.style.display = 'block';
+const startRecording = async () => {
+  console.log('startRecording()');
 
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
   audioContext = new AudioContext();
@@ -25,37 +32,15 @@ $recordButton.addEventListener('click', async (_e) => {
   );
   recorder.record();
 
-  /*
-  mediaRecorder = new MediaRecorder(audioStream);
-  audioBlobs = [];
+  currentState = STATES.recording;
+  $recordImg.className = 'stop';
+};
 
-  mediaRecorder.addEventListener('dataavailable', (event) => {
-    audioBlobs.push(event.data);
-  });
+const stopRecording = () => {
+  console.log('stopRecording()');
 
-  mediaRecorder.addEventListener('stop', async () => {
-    console.log('mimeType', mediaRecorder.mimeType);
-    audioBlob = new Blob(audioBlobs, {mimeType: mediaRecorder.mimeType});
-    audioBlobs = [];
-
-    const context = new AudioContext();
-    const source = context.createBufferSource();
-    source.buffer = Buffer.from(await audioBlob.arrayBuffer());
-    source.loop = true;
-    source.connect(context.destination);
-    source.start(0);
-
-    // document.querySelector('audio').src = window.URL.createObjectURL(audioBlob);
-    // const f = new File([audioBlob], "record.opus");
-    console.log(audioBlob);
-  });
-
-  mediaRecorder.start();
-  */
-});
-
-$stopButton.addEventListener('click', (_e) => {
   recorder.stop();
+
   recorder.exportWAV((blob) => {
     console.log('exportWAV...');
 
@@ -73,22 +58,37 @@ $stopButton.addEventListener('click', (_e) => {
     dataTransfer.items.add(file);
     $fileInput.files = dataTransfer.files;
 
-    /*
-    BinaryFileReader.read(blob, (_err, audioFile) => {
-      audioContext.decodeAudioData(audioFile.file.buffer, (buffer) => {
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.loop = true;
-        source.connect(audioContext.destination);
-        source.start(0);
-      }, (err) => {
-        console.log(err);
-      });
-      recorder.clear();
-    });
-    */
-
+    currentState = STATES.finishedRecording;
+    $recordImg.className = 'play';
   });
+};
+
+const playbackRecording = () => {
+  console.log('playbackRecording()');
+};
+
+const stopPlayback = () => {
+  console.log('stopPlayback()');
+};
+
+$recordButton.addEventListener('click', async (_e) => {
+  if (currentState === STATES.initial) {
+    startRecording();
+  } else if (currentState === STATES.recording) {
+    stopRecording();
+  } else if (currentState === STATES.finishedRecording) {
+    playbackRecording();
+  } else if (currentState === STATES.playing) {
+    stopPlayback();
+  }
+
+  /*
+  $recordButton.style.display = 'none';
+  $stopButton.style.display = 'block';
+  */
+});
+
+$stopButton.addEventListener('click', (_e) => {
 });
 
 $form.addEventListener('submit', (e) => {
