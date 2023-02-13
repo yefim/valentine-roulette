@@ -28,6 +28,7 @@ let currentState = STATES.initial;
 
 const $recordButton = document.querySelector('.record-button');
 const $recordImg = $recordButton.querySelector('img');
+const $statusText = $recordButton.querySelector('span.status');
 const $pulse = $recordButton.querySelector('.pulse');
 const $playbackAudio = document.querySelector('audio');
 
@@ -49,6 +50,7 @@ let recorder = null;
 const startRecording = async () => {
   console.log('startRecording()');
 
+  $statusText.innerText = 'Wait for it...';
   currentState = STATES.loading;
   $recordImg.className = 'loading-mic';
 
@@ -57,15 +59,16 @@ const startRecording = async () => {
   // This takes forever for some reason :(
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
 
-  if (Date.now() - startTime < 600) {
+  if (Date.now() - startTime < 800) {
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve();
-      }, 600);
+      }, 800);
     });
   }
 
 
+  $statusText.innerText = 'Recording...';
   $recordImg.className = 'stop';
   currentState = STATES.recording;
 
@@ -83,6 +86,7 @@ const stopRecording = () => {
   console.log('stopRecording()');
   document.querySelector('.yay').style.visibility = 'visible';
   $pulse.style.display = 'none';
+  $statusText.style.visibility = 'hidden';
 
   recorder.stop();
 
