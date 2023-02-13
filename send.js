@@ -68,7 +68,8 @@ const startRecording = async () => {
   }
 
 
-  $statusText.innerText = 'Recording!!!';
+  // $statusText.innerText = 'Recording!!!';
+  $statusText.style.visibility = 'hidden';
   $recordImg.className = 'stop';
   currentState = STATES.recording;
 
@@ -86,7 +87,7 @@ const stopRecording = () => {
   console.log('stopRecording()');
   document.querySelector('.yay').style.visibility = 'visible';
   $pulse.style.display = 'none';
-  $statusText.style.visibility = 'hidden';
+  // $statusText.style.visibility = 'hidden';
 
   recorder.stop();
 
