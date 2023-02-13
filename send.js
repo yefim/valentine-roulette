@@ -113,7 +113,8 @@ const stopRecording = () => {
     currentState = STATES.finishedRecording;
     $recordImg.className = 'play';
     $submitButton.disabled = false;
-    $submitButton.classList.add('shake');
+    createHearts($submitButton);
+    // $submitButton.classList.add('shake');
   });
 };
 
