@@ -50,7 +50,7 @@ let recorder = null;
 const startRecording = async () => {
   console.log('startRecording()');
 
-  $statusText.innerText = 'Wait for it...';
+  $statusText.innerText = 'Loading mic...';
   currentState = STATES.loading;
   $recordImg.className = 'loading-mic';
 
@@ -68,7 +68,7 @@ const startRecording = async () => {
   }
 
 
-  $statusText.innerText = 'Recording...';
+  $statusText.innerText = 'Recording!!!';
   $recordImg.className = 'stop';
   currentState = STATES.recording;
 
