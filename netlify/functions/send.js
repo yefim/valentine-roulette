@@ -51,6 +51,10 @@ function parseMultipartForm(event) {
   });
 }
 
+const validPhonenumber = (str) => {
+  return digits.length === 10 || (digits.length === 11 && digits[0] === '1');
+};
+
 
 const handler = async (event, _context) => {
   console.log('here we go...');
@@ -64,7 +68,9 @@ const handler = async (event, _context) => {
   // Parse the request body.
   const fields = await parseMultipartForm(event);
 
-  if (!fields.file || !fields.phonenumber || fields.phonenumber.match(/\d/g).length !== 10) {
+  const digits = fields.phonenumber ? fields.phonenumber.match(/\d/g).join('') : '';
+
+  if (!fields.file || !validPhonenumber(digits)) {
     return {
       statusCode: 400,
       body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.'
@@ -78,7 +84,7 @@ const handler = async (event, _context) => {
 
   const result = await s3.upload({
     Bucket: 'valentine-roulette',
-    Key: `${fields.phonenumber}---${uuid.v4()}.wav`,
+    Key: `${digits}---${uuid.v4()}.wav`,
     Body: fields.file.content,
     ACL: 'private',
   }).promise();
