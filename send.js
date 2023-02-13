@@ -40,8 +40,6 @@ const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
 const $submitButton = $form.querySelector('[type="submit"]');
 $submitButton.disabled = false; // reset the button to enabled
-const $numberInput = $form.querySelector('[type="tel"]');
-$numberInput.setAttribute('autocomplete', 'tel');
 
 let audioStream = null;
 let audioContext = null;
