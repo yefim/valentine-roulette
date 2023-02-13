@@ -52,7 +52,7 @@ function parseMultipartForm(event) {
 }
 
 const validPhonenumber = (str) => {
-  return digits.length === 10 || (digits.length === 11 && digits[0] === '1');
+  return str.length === 10 || (str.length === 11 && str[0] === '1');
 };
 
 
