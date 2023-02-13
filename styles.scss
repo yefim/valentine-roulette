@@ -40,6 +40,7 @@ main {
   font-weight: 600;
   font-family: 'Dela Gothic One', Helvetica, sans-serif;
   letter-spacing: 3px;
+  cursor: pointer;
 }
 
 section.ready-cta {
@@ -342,6 +343,7 @@ section.record {
     img {
       object-fit: cover;
       object-position: 0 0;
+      cursor: pointer;
     }
 
     img.stop {
