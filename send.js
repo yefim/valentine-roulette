@@ -18,9 +18,10 @@ const Recorder = window.Recorder || null; // comes from external JS
 
 const STATES = {
   initial: 0,
-  recording: 1,
-  finishedRecording: 2,
-  playing: 3,
+  loading: 1,
+  recording: 2,
+  finishedRecording: 3,
+  playing: 4,
 };
 
 let currentState = STATES.initial;
@@ -47,10 +48,15 @@ let recorder = null;
 
 const startRecording = async () => {
   console.log('startRecording()');
+
+  currentState = STATES.loading;
+  $recordImg.className = 'loading-mic';
+
+  // This takes forever for some reason :(
+  audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+
   $recordImg.className = 'stop';
   currentState = STATES.recording;
-
-  audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
 
   $pulse.style.display = 'block';
 

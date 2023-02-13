@@ -344,6 +344,11 @@ section.record {
       object-fit: cover;
       object-position: 0 0;
       cursor: pointer;
+      transition: transform 0.1s ease-in;
+    }
+
+    img.loading-mic {
+      transform: scale(0.85);
     }
 
     img.stop {
