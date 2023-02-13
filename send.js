@@ -52,8 +52,19 @@ const startRecording = async () => {
   currentState = STATES.loading;
   $recordImg.className = 'loading-mic';
 
+  const startTime = Date.now();
+
   // This takes forever for some reason :(
   audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+
+  if (Date.now() - startTime < 600) {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 600);
+    });
+  }
+
 
   $recordImg.className = 'stop';
   currentState = STATES.recording;
