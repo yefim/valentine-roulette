@@ -150,8 +150,8 @@ section.howto {
 }
 
 section.share {
-  background: coral;
-  background: url('./images/share-bg.png');
+  background-color: #ed4d75;
+  background-image: url('./images/share-bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -295,8 +295,8 @@ section.phonenumber {
 }
 
 section.record {
-  background: coral;
-  background: url('./images/header-bg.png');
+  background-color: #ea3059;
+  background-image: url('./images/header-bg.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -387,8 +387,8 @@ body.share-page {
   height: 100vh;
 
   main {
-    background: coral;
-    background: url('./images/header-bg.png');
+    background-color: #ea3059;
+    background-image: url('./images/header-bg.png');
     // background-size: cover;
     // background-size: cover;
     // background-repeat: no-repeat;
