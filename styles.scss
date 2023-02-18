@@ -134,6 +134,8 @@ section.howto {
     flex-direction: column;
 
     img {
+      object-fit: cover;
+      object-position: 0 0;
       display: block;
       margin: 0 auto 24px auto;
     }
