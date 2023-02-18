@@ -95,9 +95,6 @@ const stopRecording = () => {
     console.log('exportWAV...');
 
     $playbackAudio.src = window.URL.createObjectURL(blob);
-    // $playbackAudio.style.display = 'unset';
-    // document.querySelector('audio')
-    // document.querySelector('audio').src = window.URL.createObjectURL(blob);
 
     audioStream && audioStream.getTracks().forEach((track) => {
       track.stop();
@@ -114,7 +111,6 @@ const stopRecording = () => {
     $recordImg.className = 'play';
     $submitButton.disabled = false;
     createHearts($submitButton);
-    // $submitButton.classList.add('shake');
   });
 };
 
@@ -174,8 +170,5 @@ $form.addEventListener('submit', (e) => {
 
   $submitButton.disabled = true;
 
-  // e.preventDefault();
-
-  // loading animation
   console.log('submitting...');
 });

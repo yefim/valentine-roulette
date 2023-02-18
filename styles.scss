@@ -17,14 +17,7 @@ body {
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
 }
 
-/*
-font-family: 'Dela Gothic One', cursive;
-font-family: 'Montagu Slab', serif;
-font-family: 'Poppins', sans-serif;
-*/
-
 main {
-  // max-width: 960px;
   margin: 0 auto;
 }
 
@@ -391,11 +384,7 @@ body.share-page {
   main {
     background-color: #ea3059;
     background-image: url('./images/header-bg.png');
-    // background-size: cover;
-    // background-size: cover;
-    // background-repeat: no-repeat;
     background-repeat: repeat;
-    // background-position: center center;
     padding: 0 0 80px 0;
     height: 100vh;
     display: flex;
