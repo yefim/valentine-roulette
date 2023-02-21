@@ -56,8 +56,15 @@ const startRecording = async () => {
 
   const startTime = Date.now();
 
-  // This takes forever for some reason :(
-  audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+  try {
+    // This takes forever for some reason :(
+    audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+  } catch (_e) {
+    $statusText.innerText = 'Tap to record';
+    currentState = STATES.initial;
+    $recordImg.className = '';
+    return;
+  }
 
   if (Date.now() - startTime < 800) {
     await new Promise((resolve) => {
