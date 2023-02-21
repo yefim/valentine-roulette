@@ -60,7 +60,7 @@ const startRecording = async () => {
     // This takes forever for some reason :(
     audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
   } catch (_e) {
-    $statusText.innerText = 'Tap to record';
+    $statusText.innerText = 'Reset permissions';
     currentState = STATES.initial;
     $recordImg.className = '';
     return;
