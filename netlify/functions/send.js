@@ -11,17 +11,17 @@ function parseMultipartForm(event) {
     const busboy = Busboy({
       // it uses request headers
       // to extract the form boundary value (the ----WebKitFormBoundary thing)
-      headers: event.headers
+      headers: event.headers,
     });
 
     // before parsing anything, we need to set up some handlers.
     // whenever busboy comes across a file ...
     busboy.on(
-      "file",
+      'file',
       (fieldname, filestream, filename, _transferEncoding, mimeType) => {
         console.log('busboy.on(file)');
         // ... we take a look at the file's data ...
-        filestream.on("data", (data) => {
+        filestream.on('data', (data) => {
           console.log('filestream.on(data)');
           // ... and write the file's name, type and content into `fields`.
           fields[fieldname] = {
@@ -30,20 +30,20 @@ function parseMultipartForm(event) {
             content: data,
           };
         });
-      }
+      },
     );
 
     // whenever busboy comes across a normal field ...
-    busboy.on("field", (fieldName, value) => {
+    busboy.on('field', (fieldName, value) => {
       console.log('busboy.on(field)');
       // ... we write its value into `fields`.
       fields[fieldName] = value;
     });
 
     // once busboy is finished, we resolve the promise with the resulted fields.
-    busboy.on("finish", () => {
+    busboy.on('finish', () => {
       console.log('busboy.on(finish)');
-      resolve(fields)
+      resolve(fields);
     });
 
     // now that all handlers are set up, we can finally start processing our request!
@@ -55,25 +55,26 @@ const validPhonenumber = (str) => {
   return str.length === 10 || (str.length === 11 && str[0] === '1');
 };
 
-
 const handler = async (event, _context) => {
   console.log('here we go...');
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 404,
-      body: `Try sending a POST. You sent a ${event.httpMethod}.`
+      body: `Try sending a POST. You sent a ${event.httpMethod}.`,
     };
   }
 
   // Parse the request body.
   const fields = await parseMultipartForm(event);
 
-  const digits = fields.phonenumber ? fields.phonenumber.match(/\d/g).join('') : '';
+  const digits = fields.phonenumber
+    ? fields.phonenumber.match(/\d/g).join('')
+    : '';
 
   if (!fields.file || !validPhonenumber(digits)) {
     return {
       statusCode: 400,
-      body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.'
+      body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.',
     };
   }
 
@@ -82,22 +83,24 @@ const handler = async (event, _context) => {
     secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
   });
 
-  const result = await s3.upload({
-    Bucket: 'valentine-roulette',
-    Key: `${digits}---${uuid.v4()}.wav`,
-    Body: fields.file.content,
-    ACL: 'private',
-  }).promise();
+  const result = await s3
+    .upload({
+      Bucket: 'valentine-roulette',
+      Key: `${digits}---${uuid.v4()}.wav`,
+      Body: fields.file.content,
+      ACL: 'private',
+    })
+    .promise();
 
   console.log(result);
 
   return {
     statusCode: 302,
     headers: {
-      Location: 'https://valentineroulette.com/share',
-      'Cache-Control': 'no-cache'
+      'Location': 'https://valentineroulette.com/share',
+      'Cache-Control': 'no-cache',
     },
-    body: JSON.stringify({})
+    body: JSON.stringify({}),
   };
 };
 

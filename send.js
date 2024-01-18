@@ -1,10 +1,10 @@
-import {createHearts} from './hearts';
+import { createHearts } from './hearts';
 
-import * as Sentry from "@sentry/browser";
-import { BrowserTracing } from "@sentry/tracing";
+import * as Sentry from '@sentry/browser';
+import { BrowserTracing } from '@sentry/tracing';
 
 Sentry.init({
-  dsn: "https://767e19a15cad4d6aabad365c250883a0@o4504666334298112.ingest.sentry.io/4504666336002048",
+  dsn: 'https://767e19a15cad4d6aabad365c250883a0@o4504666334298112.ingest.sentry.io/4504666336002048',
   integrations: [new BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%
@@ -12,7 +12,6 @@ Sentry.init({
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
 });
-
 
 const Recorder = window.Recorder || null; // comes from external JS
 
@@ -58,7 +57,10 @@ const startRecording = async () => {
 
   try {
     // This takes forever for some reason :(
-    audioStream = await navigator.mediaDevices.getUserMedia({audio: true, video: false});
+    audioStream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: false,
+    });
   } catch (_e) {
     $statusText.innerText = 'Reset permissions';
     currentState = STATES.initial;
@@ -74,7 +76,6 @@ const startRecording = async () => {
     });
   }
 
-
   $statusText.innerText = 'Recording!!!';
   // $statusText.style.visibility = 'hidden';
   $recordImg.className = 'stop';
@@ -83,10 +84,9 @@ const startRecording = async () => {
   $pulse.style.display = 'block';
 
   audioContext = new AudioContext();
-  recorder = new Recorder(
-    audioContext.createMediaStreamSource(audioStream),
-    {numChannels: 1}
-  );
+  recorder = new Recorder(audioContext.createMediaStreamSource(audioStream), {
+    numChannels: 1,
+  });
   recorder.record();
 };
 
@@ -103,9 +103,10 @@ const stopRecording = () => {
 
     $playbackAudio.src = window.URL.createObjectURL(blob);
 
-    audioStream && audioStream.getTracks().forEach((track) => {
-      track.stop();
-    });
+    audioStream &&
+      audioStream.getTracks().forEach((track) => {
+        track.stop();
+      });
 
     recorder.clear();
 
