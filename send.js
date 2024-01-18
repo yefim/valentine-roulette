@@ -42,6 +42,7 @@ const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
 const $submitButton = $form.querySelector('[type="submit"]');
 $submitButton.disabled = false; // reset the button to enabled
+$submitButton.innerText = 'Send love'; // reset the button text
 
 let audioStream = null;
 let audioContext = null;
