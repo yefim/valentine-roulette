@@ -1,45 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <include src="metatags.html"></include>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Montagu+Slab:opsz,wght@16..144,600&family=Poppins:wght@900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Montagu+Slab:opsz,wght@16..144,600&family=Poppins:wght@900&display=swap"
+      rel="stylesheet"
+    />
 
-    <link rel="stylesheet" href="styles.scss">
+    <link rel="stylesheet" href="styles.scss" />
   </head>
   <body>
     <main>
       <section class="top">
-        <img height="120" width="120" src="./images/roulette-logo.png" alt="">
-        <h1 style="margin-bottom: 0;">Craft your Valentine</h1>
+        <img height="120" width="120" src="./images/roulette-logo.png" alt="" />
+        <h1 style="margin-bottom: 0">Craft your Valentine</h1>
       </section>
       <div class="send-form">
-        <form class="send" method="post"
-              action="/.netlify/functions/send" enctype="multipart/form-data">
-
+        <form
+          class="send"
+          method="post"
+          action="/.netlify/functions/send"
+          enctype="multipart/form-data"
+        >
           <section class="phonenumber">
             <h2>What's your number?</h2>
-            <p>Nothin' sketchy. Just love. Once you send your valentine, we'll text you one in return on Feb 14th.</p>
+            <p>
+              Nothin' sketchy. Just love. Once you send your valentine, we'll
+              text you one in return on Feb 14th.
+            </p>
             <div class="input">
               <span>+1</span>
-              <input required minlength="10" name="phonenumber" type="tel" autocomplete="tel" placeholder="333-333-3333">
+              <input
+                required
+                minlength="10"
+                name="phonenumber"
+                type="tel"
+                autocomplete="tel"
+                placeholder="333-333-3333"
+              />
             </div>
           </section>
 
           <section class="record">
-            <h2>
-              Record a voice note
-            </h2>
-            <p>Give compliment or an affirmation. Read a poem. Tell a love story. Sing a song. Anything that will spread some good, old-fashioned love. Keep it classy, people.</p>
+            <h2>Record a voice note</h2>
+            <p>
+              Give a compliment or an affirmation. Read a poem. Tell a love
+              story. Sing a song. Anything that will spread some good,
+              old-fashioned love. Keep it classy, people.
+            </p>
 
-            <input style="display: none;" type="file" name="file">
+            <input style="display: none" type="file" name="file" />
 
             <button type="button" class="record-button">
               <span class="status">Tap to record</span>
-              <div class="pulse" style="display: none;"></div>
-              <img width="240" height="240" src="./images/audio-sprite.png">
+              <div class="pulse" style="display: none"></div>
+              <img width="240" height="240" src="./images/audio-sprite.png" />
             </button>
 
             <audio style="display: none" controls="true"></audio>
