@@ -1,11 +1,10 @@
 import { createHearts } from './hearts';
 
 import * as Sentry from '@sentry/browser';
-import { BrowserTracing } from '@sentry/tracing';
 
 Sentry.init({
   dsn: 'https://767e19a15cad4d6aabad365c250883a0@o4504666334298112.ingest.sentry.io/4504666336002048',
-  integrations: [new BrowserTracing()],
+  integrations: [new Sentry.BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.
