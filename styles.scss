@@ -14,7 +14,8 @@ html {
 }
 
 body {
-  font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',
+    Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
 }
 
 main {
@@ -51,7 +52,7 @@ section.ready-cta {
 
   .pink-button {
     margin: 0 auto;
-    background: #FF3E95;
+    background: #ff3e95;
   }
 }
 
@@ -279,7 +280,7 @@ section.phonenumber {
     }
   }
 
-  input[type="tel"] {
+  input[type='tel'] {
     border: 3px solid black;
     border-radius: 0;
     appearance: none;
@@ -296,7 +297,6 @@ section.record {
   background-repeat: no-repeat;
   background-position: center center;
   padding: 30px 0 80px 0;
-
 
   h2 {
     color: white;
@@ -364,11 +364,15 @@ section.record {
     margin-bottom: 24px;
   }
 
-  button[type="submit"] {
+  button[type='submit'] {
     margin: 0 auto;
+    min-width: 220px;
+
+    &:disabled {
+      opacity: 0.8;
+    }
   }
 }
-
 
 form.send {
   .stop-button,
@@ -439,18 +443,17 @@ body.share-page {
 @keyframes hearts {
   0% {
     opacity: 0;
-		transform: translate(0, 0%) rotate(0deg);
+    transform: translate(0, 0%) rotate(0deg);
   }
   20% {
     opacity: 0.8;
-		transform: translate(0, -20%) rotate(0deg);
+    transform: translate(0, -20%) rotate(0deg);
   }
   100% {
     opacity: 0;
-		transform: translate(0, -1000%) rotate(0deg);
+    transform: translate(0, -1000%) rotate(0deg);
   }
 }
-
 
 .pulse {
   height: 240px;
@@ -476,14 +479,19 @@ body.share-page {
 }
 
 @keyframes shake-animation {
-  0%, 10%, 65%, 100% {
-    transform: rotate(0deg) scale(1.0);
+  0%,
+  10%,
+  65%,
+  100% {
+    transform: rotate(0deg) scale(1);
   }
 
-  30%, 40% {
+  30%,
+  40% {
     transform: rotate(-1deg) scale(1.05);
   }
-  35%, 45% {
+  35%,
+  45% {
     transform: rotate(1deg) scale(1.05);
   }
 }

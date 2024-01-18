@@ -21,6 +21,7 @@ const STATES = {
   recording: 2,
   finishedRecording: 3,
   playing: 4,
+  submitting: 5,
 };
 
 let currentState = STATES.initial;
@@ -176,7 +177,7 @@ $form.addEventListener('submit', (e) => {
     return false;
   }
 
+  currentState = STATES.submitting;
   $submitButton.disabled = true;
-
-  console.log('submitting...');
+  $submitButton.innerText = 'Uploading...';
 });
