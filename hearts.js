@@ -3,7 +3,7 @@ function rand(min, max) {
 }
 
 export const createHearts = ($el) => {
-  const numHearts = $el.offsetWidth / 50 * 5;
+  const numHearts = ($el.offsetWidth / 50) * 5;
   for (let i = 0; i < numHearts; i++) {
     const $heart = document.createElement('span');
     $heart.innerText = '🤍';
