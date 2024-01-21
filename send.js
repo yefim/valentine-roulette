@@ -83,12 +83,6 @@ async function startRecording() {
   $pulse.style.display = 'block';
 
   audioContext = new AudioContext();
-  /*
-  recorder = new Recorder(audioContext.createMediaStreamSource(audioStream), {
-    numChannels: 1,
-  });
-  recorder.record();
-  */
 
   const input = audioContext.createMediaStreamSource(audioStream);
 
@@ -96,15 +90,15 @@ async function startRecording() {
     workerDir: 'public/', // must end with slash
     encoding: 'mp3',
     numChannels: 2, //2 is the default, mp3 encoding supports only 2
-    onEncoderLoading: function (_recorder, encoding) {
+    onEncoderLoading: function(_recorder, encoding) {
       console.log('Loading ' + encoding + ' encoder...');
     },
-    onEncoderLoaded: function (_recorder, encoding) {
+    onEncoderLoaded: function(_recorder, encoding) {
       console.log(encoding + ' encoder loaded');
     },
   });
 
-  recorder.onComplete = function (_recorder, blob) {
+  recorder.onComplete = function(_recorder, blob) {
     console.log('Encoding complete');
 
     handleEncoding(blob);
