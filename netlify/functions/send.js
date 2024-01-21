@@ -86,7 +86,7 @@ const handler = async (event, _context) => {
   const result = await s3
     .upload({
       Bucket: 'valentine-roulette',
-      Key: `${digits}---${uuid.v4()}.wav`,
+      Key: `${digits}---${uuid.v4()}.mp3`,
       Body: fields.file.content,
       ACL: 'private',
     })

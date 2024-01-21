@@ -12,8 +12,6 @@ Sentry.init({
   tracesSampleRate: 1.0,
 });
 
-const Recorder = window.Recorder || null; // comes from external JS
-
 const STATES = {
   initial: 0,
   loading: 1,
@@ -47,7 +45,7 @@ let audioStream = null;
 let audioContext = null;
 let recorder = null;
 
-const startRecording = async () => {
+async function startRecording() {
   console.log('startRecording()');
 
   $statusText.innerText = 'Loading mic...';
@@ -85,61 +83,87 @@ const startRecording = async () => {
   $pulse.style.display = 'block';
 
   audioContext = new AudioContext();
+  /*
   recorder = new Recorder(audioContext.createMediaStreamSource(audioStream), {
     numChannels: 1,
   });
   recorder.record();
-};
+  */
 
-const stopRecording = () => {
+  const input = audioContext.createMediaStreamSource(audioStream);
+
+  recorder = new WebAudioRecorder(input, {
+    workerDir: 'public/', // must end with slash
+    encoding: 'mp3',
+    numChannels: 2, //2 is the default, mp3 encoding supports only 2
+    onEncoderLoading: function (_recorder, encoding) {
+      console.log('Loading ' + encoding + ' encoder...');
+    },
+    onEncoderLoaded: function (_recorder, encoding) {
+      console.log(encoding + ' encoder loaded');
+    },
+  });
+
+  recorder.onComplete = function (_recorder, blob) {
+    console.log('Encoding complete');
+
+    handleEncoding(blob);
+  };
+
+  recorder.setOptions({
+    timeLimit: 60 * 5, // 5 minutes
+    encodeAfterRecord: true,
+    mp3: { bitRate: 160 },
+  });
+
+  recorder.startRecording();
+}
+
+function handleEncoding(blob) {
+  $playbackAudio.src = window.URL.createObjectURL(blob);
+
+  audioStream &&
+    audioStream.getTracks().forEach((track) => {
+      track.stop();
+    });
+
+  const file = new File([blob], 'audio.wav');
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  $fileInput.files = dataTransfer.files;
+
+  currentState = STATES.finishedRecording;
+  $recordImg.className = 'play';
+  $submitButton.disabled = false;
+  createHearts($submitButton);
+}
+
+function stopRecording() {
   console.log('stopRecording()');
   document.querySelector('.yay').style.visibility = 'visible';
   $pulse.style.display = 'none';
   $statusText.style.visibility = 'hidden';
 
-  recorder.stop();
+  recorder.finishRecording();
+}
 
-  recorder.exportWAV((blob) => {
-    console.log('exportWAV...');
-
-    $playbackAudio.src = window.URL.createObjectURL(blob);
-
-    audioStream &&
-      audioStream.getTracks().forEach((track) => {
-        track.stop();
-      });
-
-    recorder.clear();
-
-    const file = new File([blob], 'audio.wav');
-    const dataTransfer = new DataTransfer();
-    dataTransfer.items.add(file);
-    $fileInput.files = dataTransfer.files;
-
-    currentState = STATES.finishedRecording;
-    $recordImg.className = 'play';
-    $submitButton.disabled = false;
-    createHearts($submitButton);
-  });
-};
-
-const playbackRecording = () => {
+function playbackRecording() {
   console.log('playbackRecording()');
   $playbackAudio.play();
 
   $pulse.style.display = 'block';
   currentState = STATES.playing;
   $recordImg.className = 'pause';
-};
+}
 
-const stopPlayback = () => {
+function stopPlayback() {
   console.log('stopPlayback()');
   $playbackAudio.pause();
 
   $pulse.style.display = 'none';
   currentState = STATES.finishedRecording;
   $recordImg.className = 'play';
-};
+}
 
 $recordButton.addEventListener('click', async (_e) => {
   if (currentState === STATES.initial) {
