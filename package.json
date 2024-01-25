@@ -16,7 +16,7 @@
     "process": "0.11.10"
   },
   "dependencies": {
-    "@sentry/browser": "7.93.0",
+    "@sentry/browser": "7.98.0",
     "aws-sdk": "2.1538.0",
     "busboy": "1.6.0",
     "serve-static": "1.15.0",
