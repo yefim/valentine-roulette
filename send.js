@@ -126,8 +126,6 @@ function handleEncoding(blob) {
   dataTransfer.items.add(file);
   $fileInput.files = dataTransfer.files;
 
-  currentState = STATES.finishedRecording;
-  $recordImg.className = 'play';
   $submitButton.disabled = false;
   createHearts($submitButton);
 }
@@ -137,6 +135,9 @@ function stopRecording() {
   document.querySelector('.yay').style.visibility = 'visible';
   $pulse.style.display = 'none';
   $statusText.style.visibility = 'hidden';
+
+  currentState = STATES.finishedRecording;
+  $recordImg.className = 'play';
 
   recorder.finishRecording();
 }
