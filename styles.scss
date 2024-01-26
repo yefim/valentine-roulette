@@ -339,6 +339,14 @@ section.record {
     margin-bottom: 8px;
     position: relative;
 
+    /*
+     * Remove focus styles for non-keyboard focus.
+     */
+    :focus:not(:focus-visible) {
+      outline: 0;
+      box-shadow: none;
+    }
+
     span {
       color: black;
       font-family: 'Poppins', Helvetica, sans-serif;
