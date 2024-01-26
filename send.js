@@ -121,7 +121,7 @@ function handleEncoding(blob) {
       track.stop();
     });
 
-  const file = new File([blob], 'audio.wav');
+  const file = new File([blob], 'audio.mp3');
   const dataTransfer = new DataTransfer();
   dataTransfer.items.add(file);
   $fileInput.files = dataTransfer.files;
