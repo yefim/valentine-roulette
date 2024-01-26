@@ -51,11 +51,11 @@ function parseMultipartForm(event) {
   });
 }
 
-const validPhonenumber = (str) => {
+function validPhonenumber(str) {
   return str.length === 10 || (str.length === 11 && str[0] === '1');
-};
+}
 
-const handler = async (event, _context) => {
+async function handler(event, _context) {
   console.log('here we go...');
   if (event.httpMethod !== 'POST') {
     return {
@@ -94,14 +94,22 @@ const handler = async (event, _context) => {
 
   console.log(result);
 
+  const objects = await s3
+    .listObjectsV2({
+      Bucket: 'valentine-roulette',
+    })
+    .promise();
+
+  const numberOfObjects = objects.Contents?.length ?? 0;
+
   return {
     statusCode: 302,
     headers: {
-      'Location': 'https://valentineroulette.com/share',
+      'Location': `https://valentineroulette.com/share?count=${numberOfObjects}`,
       'Cache-Control': 'no-cache',
     },
     body: JSON.stringify({}),
   };
-};
+}
 
 module.exports.handler = handler;
