@@ -97,6 +97,8 @@ async function handler(event, _context) {
   const objects = await s3
     .listObjectsV2({
       Bucket: 'valentine-roulette',
+      Prefix: '',
+      Delimiter: '/',
     })
     .promise();
 
