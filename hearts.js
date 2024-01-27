@@ -2,8 +2,9 @@ function rand(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-export const createHearts = ($el) => {
-  const numHearts = ($el.offsetWidth / 50) * 5;
+export function createHearts($el) {
+  const numHearts = ($el.offsetWidth / 50) * 3;
+
   for (let i = 0; i < numHearts; i++) {
     const $heart = document.createElement('span');
     $heart.innerText = '🤍';
@@ -14,4 +15,4 @@ export const createHearts = ($el) => {
 
     $el.appendChild($heart);
   }
-};
+}
