@@ -56,7 +56,8 @@ function validPhonenumber(str) {
 }
 
 async function handler(event, _context) {
-  console.log('here we go...');
+  console.log(`[handler ${Date.now()}]`);
+
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 404,
@@ -83,16 +84,21 @@ async function handler(event, _context) {
     secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
   });
 
-  const result = await s3
-    .upload({
-      Bucket: 'valentine-roulette',
-      Key: `${digits}---${uuid.v4()}.mp3`,
-      Body: fields.file.content,
-      ACL: 'private',
-    })
-    .promise();
-
-  console.log(result);
+  try {
+    await s3
+      .upload({
+        Bucket: 'valentine-roulette',
+        Key: `${digits}---${uuid.v4()}.mp3`,
+        Body: fields.file.content,
+        ACL: 'private',
+      })
+      .promise();
+  } catch (e) {
+    return {
+      statusCode: 400,
+      body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.',
+    };
+  }
 
   const objects = await s3
     .listObjectsV2({
