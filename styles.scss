@@ -450,6 +450,14 @@ body.share-page {
 
 .fun {
   position: relative;
+  transition: transform 0.3s ease-in-out;
+}
+
+// Apply hover styles to desktop
+@media only screen and (min-width: 769px) {
+  .fun:hover {
+    transform: scale(1.05);
+  }
 }
 
 .heart-particle {

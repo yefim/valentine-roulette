@@ -197,9 +197,7 @@
       import { createHearts } from './hearts';
 
       for (const $fun of document.querySelectorAll('.fun')) {
-        $fun.addEventListener('click', (e) => {
-          createHearts(e.target);
-        });
+        createHearts($fun);
       }
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
