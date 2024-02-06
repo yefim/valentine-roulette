@@ -11,11 +11,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "airtable": "^0.11.6",
-    "aws-sdk": "^2.1315.0",
+    "airtable": "0.11.6",
+    "aws-sdk": "2.1315.0",
     "chalk": "4.1.2",
-    "fluent-ffmpeg": "^2.1.2",
-    "lodash": "^4.17.21",
-    "twilio": "^4.7.2"
+    "fluent-ffmpeg": "2.1.2",
+    "lodash": "4.17.21",
+    "twilio": "4.7.2"
   }
 }

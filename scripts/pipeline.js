@@ -1,6 +1,9 @@
 const chalk = require('chalk');
 const ffmpeg = require('fluent-ffmpeg');
-const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const client = require('twilio')(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN,
+);
 const _ = require('lodash');
 const fs = require('fs');
 
@@ -8,21 +11,23 @@ const AWS = require('aws-sdk');
 AWS.config.update({
   accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
-  region: 'us-east-1'
+  region: 'us-east-1',
 });
-const s3 = new AWS.S3()
+const s3 = new AWS.S3();
 
 const Airtable = require('airtable');
 Airtable.configure({
   endpointUrl: 'https://api.airtable.com',
-  apiKey: process.env.AIRTABLE_API_KEY
+  apiKey: process.env.AIRTABLE_API_KEY,
 });
 
 const base = Airtable.base(process.env.AIRTABLE_VDAY_BASE);
 
-const copy = "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Valentine Roulette Team"
+const copy =
+  "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Valentine Roulette Team";
 
-const copy2 = "Here's a day-late dose of love. Please accept Cupid's apology for running behind. But, hey, love doesn't end after Feb 14! <3 The Valentine Roulette Team";
+const copy2 =
+  "Here's a day-late dose of love. Please accept Cupid's apology for running behind. But, hey, love doesn't end after Feb 14! <3 The Valentine Roulette Team";
 
 /*
 
@@ -61,145 +66,153 @@ const sendValentines = async () => {
   const digitsToNote = {};
   const extras = [];
 
-  base('Table 1').select({
-    // filterByFormula: '{Approved} = TRUE()',
-    view: "Grid view"
-  }).eachPage(function page(records, fetchNextPage) {
-    length += records.length;
-    records.forEach(function(submission) {
-      const sender = submission.get('Sender');
-      digits.add(sender);
+  base('Table 1')
+    .select({
+      // filterByFormula: '{Approved} = TRUE()',
+      view: 'Grid view',
+    })
+    .eachPage(
+      function page(records, fetchNextPage) {
+        length += records.length;
+        records.forEach(function(submission) {
+          const sender = submission.get('Sender');
+          digits.add(sender);
 
-      if (submission.get('Approved') === true) {
-        numApproved++;
+          if (submission.get('Approved') === true) {
+            numApproved++;
 
-        const url = submission.get('URL');
-        const filename = url.split('/').at(-1);
+            const url = submission.get('URL');
+            const filename = url.split('/').at(-1);
 
-        if (digitsToNote[sender]) {
-          extras.push(filename);
-        } else {
-          digitsToNote[sender] = filename;
-        }
-      }
-    });
-
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    fetchNextPage();
-
-  }, function done(err) {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    const randomized = _.shuffle([...digits]);
-    const assignments = {};
-
-    for (let i = 0; i < randomized.length; i++) {
-      const rando = randomized[i];
-      const nextRando = randomized[(i + 1) % randomized.length];
-
-      assignments[rando] = null;
-
-      if (digitsToNote[nextRando]) {
-        assignments[rando] = digitsToNote[nextRando];
-      } else if (extras.length) {
-        for (let i = 0; i < extras.length; i++) {
-          // Check to make sure we're not sending someone their own note
-          const index = extras[i].indexOf(rando);
-          if (index === 0 || index === 1) {
-            continue;
+            if (digitsToNote[sender]) {
+              extras.push(filename);
+            } else {
+              digitsToNote[sender] = filename;
+            }
           }
+        });
 
-          assignments[rando] = extras[i];
-          extras.splice(i, 1);
-          break;
+        // To fetch the next page of records, call `fetchNextPage`.
+        // If there are more records, `page` will get called again.
+        fetchNextPage();
+      },
+      function done(err) {
+        if (err) {
+          console.error(err);
+          return;
         }
-      } else {
-        // Sorry dude, you're getting the best one.
-        assignments[rando] = 'the-best.wav';
-      }
-    }
 
-    console.log(`Total Submissions: ${length}`);
-    console.log(`Number approved: ${numApproved}`);
-    console.log(`Unique Phonenumbers: ${digits.size}`);
-    console.log(Object.values(assignments).filter(Boolean).length);
+        const randomized = _.shuffle([...digits]);
+        const assignments = {};
 
-    let n = 0;
-    
-    for (const to of Object.keys(assignments)) {
-      const wavFilename = assignments[to];
-      const filename = wavFilename.split('.').at(0).split('---').at(-1);
-      const url = `https://valentine-roulette-converted.s3.amazonaws.com/${filename}.mp4`;
+        for (let i = 0; i < randomized.length; i++) {
+          const rando = randomized[i];
+          const nextRando = randomized[(i + 1) % randomized.length];
 
-      if (ERRORS.indexOf(parseInt(to, 10)) !== -1) {
-        client.messages
-          .create({
-            body: copy,
-            from: '+13476577597',
-            mediaUrl: [url],
-            to: `+1${to}`
-          })
-          .then(() => {
-            n++;
-            console.log(`${n}. Sent ${url} to ${to}`);
-          })
-          .catch((_e) => {
-            console.log(chalk.red(`Could not reach ${to}`));
-          });
-      }
-    }
-  });
+          assignments[rando] = null;
+
+          if (digitsToNote[nextRando]) {
+            assignments[rando] = digitsToNote[nextRando];
+          } else if (extras.length) {
+            for (let i = 0; i < extras.length; i++) {
+              // Check to make sure we're not sending someone their own note
+              const index = extras[i].indexOf(rando);
+              if (index === 0 || index === 1) {
+                continue;
+              }
+
+              assignments[rando] = extras[i];
+              extras.splice(i, 1);
+              break;
+            }
+          } else {
+            // Sorry dude, you're getting the best one.
+            assignments[rando] = 'the-best.wav';
+          }
+        }
+
+        console.log(`Total Submissions: ${length}`);
+        console.log(`Number approved: ${numApproved}`);
+        console.log(`Unique Phonenumbers: ${digits.size}`);
+        console.log(Object.values(assignments).filter(Boolean).length);
+
+        let n = 0;
+
+        for (const to of Object.keys(assignments)) {
+          const wavFilename = assignments[to];
+          const filename = wavFilename.split('.').at(0).split('---').at(-1);
+          const url = `https://valentine-roulette-converted.s3.amazonaws.com/${filename}.mp4`;
+
+          if (ERRORS.indexOf(parseInt(to, 10)) !== -1) {
+            client.messages
+              .create({
+                body: copy,
+                from: '+13476577597',
+                mediaUrl: [url],
+                to: `+1${to}`,
+              })
+              .then(() => {
+                n++;
+                console.log(`${n}. Sent ${url} to ${to}`);
+              })
+              .catch((_e) => {
+                console.log(chalk.red(`Could not reach ${to}`));
+              });
+          }
+        }
+      },
+    );
 };
 
 const downloadValentines = async () => {
   let length = 0;
 
-  base('Table 1').select({
-    filterByFormula: '{Approved} = TRUE()',
-    view: "Grid view"
-  }).eachPage(async function page(records, fetchNextPage) {
-    length += records.length;
-    // This function (`page`) will get called for each page of records.
+  base('Table 1')
+    .select({
+      filterByFormula: '{Approved} = TRUE()',
+      view: 'Grid view',
+    })
+    .eachPage(
+      async function page(records, fetchNextPage) {
+        length += records.length;
+        // This function (`page`) will get called for each page of records.
 
-    records.forEach(async (submission) => {
-      const url = submission.get('URL');
-      const filename = url.split('/').at(-1);
-      const destination = `./notes/${filename.split('---').at(-1)}`;
+        records.forEach(async (submission) => {
+          const url = submission.get('URL');
+          const filename = url.split('/').at(-1);
+          const destination = `./notes/${filename.split('---').at(-1)}`;
 
-      // Skip over existing files
-      if (fs.existsSync(destination)) {
-        return;
-      }
+          // Skip over existing files
+          if (fs.existsSync(destination)) {
+            return;
+          }
 
-      const params = {
-        Bucket: 'valentine-roulette',
-        Key: filename,
-      }
+          const params = {
+            Bucket: 'valentine-roulette',
+            Key: filename,
+          };
 
-      const { Body } = await s3.getObject(params).promise();
-      fs.writeFileSync(destination, Body)
+          const { Body } = await s3.getObject(params).promise();
+          fs.writeFileSync(destination, Body);
 
-      console.log('Retrieved', url);
-    });
+          console.log('Retrieved', url);
+        });
 
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    // If there are no more records, `done` will get called.
-    fetchNextPage();
+        // To fetch the next page of records, call `fetchNextPage`.
+        // If there are more records, `page` will get called again.
+        // If there are no more records, `done` will get called.
+        fetchNextPage();
+      },
+      function done(err) {
+        if (err) {
+          console.error(err);
+          return;
+        }
 
-  }, function done(err) {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    console.log(`Number approved: ${length}`);
-  });
-}
+        console.log(`Number approved: ${length}`);
+      },
+    );
+};
 
 const transcodeValentines = async () => {
   const transcode = (file, destination, audioBitrate, retries = 0) => {
@@ -229,22 +242,36 @@ const transcodeValentines = async () => {
         // '-crf 18',
         '-pix_fmt yuv420p',
         // '-t 00:00:10',
-        '-shortest'
+        '-shortest',
       ])
-      .on('start', function () {
-        console.log(chalk.green(`Transcoding ${file} with audio bitrate of ${audioBitrate}...`));
+      .on('start', function() {
+        console.log(
+          chalk.green(
+            `Transcoding ${file} with audio bitrate of ${audioBitrate}...`,
+          ),
+        );
       })
-      .on('end', function () {
+      .on('end', function() {
         const size = fs.statSync(destination).size;
 
         if (size > 590000) {
-          console.log(chalk.red(`Big boy coming in at ${size}. Trying ${file} again.`));
-          transcode(file, destination, Math.floor(audioBitrate / 2), retries + 1);
+          console.log(
+            chalk.red(`Big boy coming in at ${size}. Trying ${file} again.`),
+          );
+          transcode(
+            file,
+            destination,
+            Math.floor(audioBitrate / 2),
+            retries + 1,
+          );
         } else {
-          console.log(`Finished transcoding ${destination} - bitrate:${audioBitrate} size:${size}`);
+          console.log(
+            `Finished transcoding ${destination} - bitrate:${audioBitrate} size:${size}`,
+          );
         }
       })
-      .output(destination).run();
+      .output(destination)
+      .run();
   };
 
   const files = fs.readdirSync('./notes');
@@ -275,7 +302,10 @@ const uploadValentines = async () => {
 
   // Sort files by size, smallest to largest
   files.sort(function(a, b) {
-    return fs.statSync(`./transcodes/${a}`).size - fs.statSync(`./transcodes/${b}`).size;
+    return (
+      fs.statSync(`./transcodes/${a}`).size -
+      fs.statSync(`./transcodes/${b}`).size
+    );
   });
 
   // for (const file of files.slice(0, 3)) {
@@ -286,10 +316,12 @@ const uploadValentines = async () => {
     uploaded++;
 
     // Remove check if we're replacing files
-    const exists = await s3.headObject({
-      Bucket: 'valentine-roulette-converted',
-      Key: file
-    }).promise()
+    const exists = await s3
+      .headObject({
+        Bucket: 'valentine-roulette-converted',
+        Key: file,
+      })
+      .promise()
       .then(
         () => true,
         (err) => {
@@ -297,7 +329,7 @@ const uploadValentines = async () => {
             return false;
           }
           throw err;
-        }
+        },
       );
 
     if (!exists) {
@@ -305,33 +337,36 @@ const uploadValentines = async () => {
         Bucket: 'valentine-roulette-converted',
         Key: file,
         Body: content,
-        ContentType: 'video/mp4'
+        ContentType: 'video/mp4',
       }).promise();
     }
   }
 
   console.log(`Uploaded: ${uploaded}`);
-}
+};
 
 const markValentinesAsSent = async () => {
   let sent = 0;
 
-  base('Table 1').select({
-    filterByFormula: '{Approved} = TRUE()',
-    view: "Grid view"
-  }).eachPage(function page(records, fetchNextPage) {
-    // This function (`page`) will get called for each page of records.
+  base('Table 1')
+    .select({
+      filterByFormula: '{Approved} = TRUE()',
+      view: 'Grid view',
+    })
+    .eachPage(
+      function page(records, fetchNextPage) {
+        // This function (`page`) will get called for each page of records.
 
-    records.forEach(function(submission) {
-      const url = submission.get('URL');
-      const id = url.split('---').at(-1).split('.').at(0);
+        records.forEach(function(submission) {
+          const url = submission.get('URL');
+          const id = url.split('---').at(-1).split('.').at(0);
 
-      // todo: populate SENT array
-      const SENT = [];
-      if (SENT.indexOf(id) !== -1) {
-        sent++;
+          // todo: populate SENT array
+          const SENT = [];
+          if (SENT.indexOf(id) !== -1) {
+            sent++;
 
-        /*
+            /*
         base('Table 1').update([
           {
             "id": submission.id,
@@ -345,20 +380,24 @@ const markValentinesAsSent = async () => {
           }
         });
         */
-      }
-    });
+          }
+        });
 
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    // If there are no more records, `done` will get called.
-    fetchNextPage();
+        // To fetch the next page of records, call `fetchNextPage`.
+        // If there are more records, `page` will get called again.
+        // If there are no more records, `done` will get called.
+        fetchNextPage();
+      },
+      function done(err) {
+        if (err) {
+          console.error(err);
+          return;
+        }
 
-  }, function done(err) {
-    if (err) { console.error(err); return; }
-
-    console.log(`Sent: ${sent}`);
-  });
-}
+        console.log(`Sent: ${sent}`);
+      },
+    );
+};
 
 const sendValentines2 = async () => {
   const wavFilenames = [];
@@ -380,52 +419,56 @@ const sendValentines2 = async () => {
       const name = r.split('---').at(-1).split('.').at(0);
       return `https://valentine-roulette-converted.s3.amazonaws.com/${name}.mp4`;
     }
-  }
+  };
 
-  base('Table 1').select({
-    filterByFormula: 'AND({Approved} = TRUE(), {Sent Out} = FALSE())',
-    view: "Grid view"
-  }).eachPage(function page(records, fetchNextPage) {
-    records.forEach(function(submission) {
-      const url = submission.get('URL');
-      const filename = url.split('/').at(-1);
-      wavFilenames.push(filename);
-    });
-
-    // To fetch the next page of records, call `fetchNextPage`.
-    // If there are more records, `page` will get called again.
-    fetchNextPage();
-
-  }, function done(_err) {
-    let n = 0;
-
-    console.log(wavFilenames.length);
-
-    for (const to of lateComers) {
-      const url = getRandomUrl(to);
-
-      client.messages
-        .create({
-          body: copy2,
-          from: '+13476577597',
-          mediaUrl: [url],
-          to: `+1${to}`
-        })
-        .then(() => {
-          n++;
-          console.log(`${n}. Sent ${url} to ${to}`);
-        })
-        .catch((_e) => {
-          console.log(chalk.red(`Could not reach ${to}`));
+  base('Table 1')
+    .select({
+      filterByFormula: 'AND({Approved} = TRUE(), {Sent Out} = FALSE())',
+      view: 'Grid view',
+    })
+    .eachPage(
+      function page(records, fetchNextPage) {
+        records.forEach(function(submission) {
+          const url = submission.get('URL');
+          const filename = url.split('/').at(-1);
+          wavFilenames.push(filename);
         });
-    }
 
-    console.log(wavFilenames.length);
-  });
+        // To fetch the next page of records, call `fetchNextPage`.
+        // If there are more records, `page` will get called again.
+        fetchNextPage();
+      },
+      function done(_err) {
+        let n = 0;
+
+        console.log(wavFilenames.length);
+
+        for (const to of lateComers) {
+          const url = getRandomUrl(to);
+
+          client.messages
+            .create({
+              body: copy2,
+              from: '+13476577597',
+              mediaUrl: [url],
+              to: `+1${to}`,
+            })
+            .then(() => {
+              n++;
+              console.log(`${n}. Sent ${url} to ${to}`);
+            })
+            .catch((_e) => {
+              console.log(chalk.red(`Could not reach ${to}`));
+            });
+        }
+
+        console.log(wavFilenames.length);
+      },
+    );
 };
 
 const sendSingleValentine = async () => {
-  const to = ''
+  const to = '';
   const url = '';
 
   client.messages
@@ -433,7 +476,7 @@ const sendSingleValentine = async () => {
       body: copy2,
       from: '+13476577597',
       mediaUrl: [url],
-      to: `+1${to}`
+      to: `+1${to}`,
     })
     .then(() => {
       console.log(`Sent ${url} to ${to}`);
@@ -451,6 +494,3 @@ const sendSingleValentine = async () => {
 // sendValentines2();
 // markValentinesAsSent();
 // sendSingleValentine();
-
-
-
