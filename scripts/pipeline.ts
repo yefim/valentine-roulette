@@ -1,13 +1,15 @@
-const chalk = require('chalk');
-const ffmpeg = require('fluent-ffmpeg');
-const client = require('twilio')(
+import chalk from 'chalk';
+import ffmpeg from 'fluent-ffmpeg';
+import twilio from 'twilio';
+
+const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN,
 );
-const _ = require('lodash');
-const fs = require('fs');
+import _ from 'lodash';
+import fs from 'fs';
 
-const AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 AWS.config.update({
   accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
@@ -15,13 +17,19 @@ AWS.config.update({
 });
 const s3 = new AWS.S3();
 
-const Airtable = require('airtable');
+interface VRecord {
+  sender: string;
+  url: string;
+  approved: boolean;
+}
+
+import Airtable from 'airtable';
 Airtable.configure({
   endpointUrl: 'https://api.airtable.com',
   apiKey: process.env.AIRTABLE_API_KEY,
 });
 
-const base = Airtable.base(process.env.AIRTABLE_VDAY_BASE);
+const base = Airtable.base(process.env.AIRTABLE_VDAY_BASE ?? '');
 
 const copy =
   "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Valentine Roulette Team";
@@ -62,9 +70,9 @@ ffmpeg -loop 1 -i heart.jpg -i long.wav -c:v libx264 -tune stillimage -c:a libop
 const sendValentines = async () => {
   let length = 0;
   let numApproved = 0;
-  const digits = new Set();
+  const digits = new Set<string>();
   const digitsToNote = {};
-  const extras = [];
+  const extras: string[] = [];
 
   base('Table 1')
     .select({
@@ -74,14 +82,18 @@ const sendValentines = async () => {
     .eachPage(
       function page(records, fetchNextPage) {
         length += records.length;
-        records.forEach(function(submission) {
+        for (const submission of records) {
           const sender = submission.get('Sender');
+          const url = submission.get('URL') ?? '';
+
+          if (typeof sender !== 'string' || typeof url !== 'string') {
+            continue;
+          }
+
           digits.add(sender);
 
           if (submission.get('Approved') === true) {
             numApproved++;
-
-            const url = submission.get('URL');
             const filename = url.split('/').at(-1);
 
             if (digitsToNote[sender]) {
@@ -90,13 +102,13 @@ const sendValentines = async () => {
               digitsToNote[sender] = filename;
             }
           }
-        });
+        }
 
         // To fetch the next page of records, call `fetchNextPage`.
         // If there are more records, `page` will get called again.
         fetchNextPage();
       },
-      function done(err) {
+      function done(err: any) {
         if (err) {
           console.error(err);
           return;
@@ -136,86 +148,71 @@ const sendValentines = async () => {
         console.log(`Unique Phonenumbers: ${digits.size}`);
         console.log(Object.values(assignments).filter(Boolean).length);
 
-        let n = 0;
+        // let n = 0;
 
-        for (const to of Object.keys(assignments)) {
-          const wavFilename = assignments[to];
-          const filename = wavFilename.split('.').at(0).split('---').at(-1);
-          const url = `https://valentine-roulette-converted.s3.amazonaws.com/${filename}.mp4`;
-
-          if (ERRORS.indexOf(parseInt(to, 10)) !== -1) {
-            client.messages
-              .create({
-                body: copy,
-                from: '+13476577597',
-                mediaUrl: [url],
-                to: `+1${to}`,
-              })
-              .then(() => {
-                n++;
-                console.log(`${n}. Sent ${url} to ${to}`);
-              })
-              .catch((_e) => {
-                console.log(chalk.red(`Could not reach ${to}`));
-              });
-          }
-        }
+        // for (const to of Object.keys(assignments)) {
+        // const wavFilename = assignments[to];
+        // const filename = wavFilename.split('.').at(0).split('---').at(-1);
+        // const url = `https://valentine-roulette-converted.s3.amazonaws.com/${filename}.mp4`;
+        // if (ERRORS.indexOf(parseInt(to, 10)) !== -1) {
+        //   client.messages
+        //     .create({
+        //       body: copy,
+        //       from: '+13476577597',
+        //       mediaUrl: [url],
+        //       to: `+1${to}`,
+        //     })
+        //     .then(() => {
+        //       n++;
+        //       console.log(`${n}. Sent ${url} to ${to}`);
+        //     })
+        //     .catch((_e) => {
+        //       console.log(chalk.red(`Could not reach ${to}`));
+        //     });
+        // }
+        // }
       },
     );
 };
 
-const downloadValentines = async () => {
-  let length = 0;
+async function downloadValentines() {
+  const allSubmissions = await fetchAllRecords('2024', '{Approved} = TRUE()');
 
-  base('Table 1')
-    .select({
-      filterByFormula: '{Approved} = TRUE()',
-      view: 'Grid view',
-    })
-    .eachPage(
-      async function page(records, fetchNextPage) {
-        length += records.length;
-        // This function (`page`) will get called for each page of records.
+  console.log(`Found ${allSubmissions.length} approved submissions...`);
 
-        records.forEach(async (submission) => {
-          const url = submission.get('URL');
-          const filename = url.split('/').at(-1);
-          const destination = `./notes/${filename.split('---').at(-1)}`;
+  for (const { url } of allSubmissions) {
+    const filename = url.split('/').at(-1);
+    const destination = `./notes/${filename.split('---').at(-1)}`;
 
-          // Skip over existing files
-          if (fs.existsSync(destination)) {
-            return;
-          }
+    if (fs.existsSync(destination)) {
+      continue;
+    }
 
-          const params = {
-            Bucket: 'valentine-roulette',
-            Key: filename,
-          };
+    console.log(`Downloading ${filename}...`);
+    try {
+      const params = {
+        Bucket: 'valentine-roulette',
+        Key: filename,
+      };
 
-          const { Body } = await s3.getObject(params).promise();
-          fs.writeFileSync(destination, Body);
+      await s3.headObject(params).promise();
+      const readStream = s3.getObject(params).createReadStream();
 
-          console.log('Retrieved', url);
-        });
+      const writeStream = fs.createWriteStream(destination);
+      readStream.pipe(writeStream);
+    } catch (_e) {
+      console.log(`Could not find ${filename}. Skipping...`);
+    }
+  }
+}
 
-        // To fetch the next page of records, call `fetchNextPage`.
-        // If there are more records, `page` will get called again.
-        // If there are no more records, `done` will get called.
-        fetchNextPage();
-      },
-      function done(err) {
-        if (err) {
-          console.error(err);
-          return;
-        }
-
-        console.log(`Number approved: ${length}`);
-      },
-    );
-};
-
-const transcodeValentines = async () => {
-  const transcode = (file, destination, audioBitrate, retries = 0) => {
+async function transcodeValentines() {
+  function transcode(
+    file: string,
+    destination: string,
+    audioBitrate: number,
+    retries = 0,
+  ): void {
     // Give up after 3 retries.
     if (retries > 3) {
       console.log(chalk.red(`Giving up on ${file}`));
@@ -244,14 +241,14 @@ const transcodeValentines = async () => {
         // '-t 00:00:10',
         '-shortest',
       ])
-      .on('start', function() {
+      .on('start', function () {
         console.log(
           chalk.green(
             `Transcoding ${file} with audio bitrate of ${audioBitrate}...`,
           ),
         );
       })
-      .on('end', function() {
+      .on('end', function () {
         const size = fs.statSync(destination).size;
 
         if (size > 590000) {
@@ -272,12 +269,12 @@ const transcodeValentines = async () => {
       })
       .output(destination)
       .run();
-  };
+  }
 
   const files = fs.readdirSync('./notes');
 
   // Sort files by size, smallest to largest
-  files.sort(function(a, b) {
+  files.sort(function (a: string, b: string) {
     return fs.statSync(`./notes/${a}`).size - fs.statSync(`./notes/${b}`).size;
   });
 
@@ -294,14 +291,14 @@ const transcodeValentines = async () => {
 
     transcode(file, destination, 96);
   }
-};
+}
 
 const uploadValentines = async () => {
   const files = fs.readdirSync('./transcodes');
   let uploaded = 0;
 
   // Sort files by size, smallest to largest
-  files.sort(function(a, b) {
+  files.sort(function (a: string, b: string) {
     return (
       fs.statSync(`./transcodes/${a}`).size -
       fs.statSync(`./transcodes/${b}`).size
@@ -324,7 +321,7 @@ const uploadValentines = async () => {
       .promise()
       .then(
         () => true,
-        (err) => {
+        (err: any) => {
           if (err.code === 'NotFound') {
             return false;
           }
@@ -357,12 +354,16 @@ const markValentinesAsSent = async () => {
       function page(records, fetchNextPage) {
         // This function (`page`) will get called for each page of records.
 
-        records.forEach(function(submission) {
+        for (const submission of records) {
           const url = submission.get('URL');
+          if (typeof url !== 'string') {
+            continue;
+          }
+
           const id = url.split('---').at(-1).split('.').at(0);
 
           // todo: populate SENT array
-          const SENT = [];
+          const SENT: string[] = [];
           if (SENT.indexOf(id) !== -1) {
             sent++;
 
@@ -381,14 +382,14 @@ const markValentinesAsSent = async () => {
         });
         */
           }
-        });
+        }
 
         // To fetch the next page of records, call `fetchNextPage`.
         // If there are more records, `page` will get called again.
         // If there are no more records, `done` will get called.
         fetchNextPage();
       },
-      function done(err) {
+      function done(err: any) {
         if (err) {
           console.error(err);
           return;
@@ -400,11 +401,11 @@ const markValentinesAsSent = async () => {
 };
 
 const sendValentines2 = async () => {
-  const wavFilenames = [];
+  const wavFilenames: string[] = [];
 
   const lateComers = [];
 
-  const getRandomUrl = (number) => {
+  const getRandomUrl = (number: string) => {
     const r = _.sample(wavFilenames);
 
     // Check to make sure we're not sending someone their own note
@@ -412,7 +413,7 @@ const sendValentines2 = async () => {
     if (index === 0 || index === 1) {
       // try again.
       console.log(`${number} was about to get ${r}. Trying again...`);
-      return getRandomUrl();
+      return getRandomUrl(number);
     } else {
       const i = wavFilenames.indexOf(r);
       wavFilenames.splice(i, 1);
@@ -428,17 +429,20 @@ const sendValentines2 = async () => {
     })
     .eachPage(
       function page(records, fetchNextPage) {
-        records.forEach(function(submission) {
+        for (const submission of records) {
           const url = submission.get('URL');
+          if (typeof url !== 'string') {
+            continue;
+          }
           const filename = url.split('/').at(-1);
           wavFilenames.push(filename);
-        });
+        }
 
         // To fetch the next page of records, call `fetchNextPage`.
         // If there are more records, `page` will get called again.
         fetchNextPage();
       },
-      function done(_err) {
+      function done() {
         let n = 0;
 
         console.log(wavFilenames.length);
@@ -457,7 +461,7 @@ const sendValentines2 = async () => {
               n++;
               console.log(`${n}. Sent ${url} to ${to}`);
             })
-            .catch((_e) => {
+            .catch(() => {
               console.log(chalk.red(`Could not reach ${to}`));
             });
         }
@@ -481,16 +485,91 @@ const sendSingleValentine = async () => {
     .then(() => {
       console.log(`Sent ${url} to ${to}`);
     })
-    .catch((e) => {
+    .catch((e: any) => {
       console.log(e);
       console.log(chalk.red(`Could not reach ${to}`));
     });
 };
 
-// downloadValentines();
-// transcodeValentines();
-// uploadValentines();
-// sendValentines();
-// sendValentines2();
-// markValentinesAsSent();
-// sendSingleValentine();
+async function remindOldUsers() {
+  const copy =
+    'hey friends and lovers, we loved your voice so much last year that we hope you send another voice note valentine at valentineroulette.com this year! make a stranger’s vday special 💌';
+  // const allUsers = await fetchAllRecords('2024');
+  const allUsers: VRecord[] = [
+    {
+      sender: '2132547530',
+      approved: false,
+      url: 'test',
+    },
+  ];
+
+  const digits = [...new Set(allUsers.map((u) => u.sender))];
+
+  console.log(allUsers.filter((u) => u.approved).length);
+  console.log(allUsers.length);
+  console.log(digits.length);
+
+  return;
+  for (const to of digits) {
+    await client.messages.create({
+      body: copy,
+      from: '+12294083291',
+      to: `+1${to}`,
+    });
+  }
+}
+
+async function fetchAllRecords(
+  tableName: string,
+  filter?: string,
+): Promise<VRecord[]> {
+  const results: VRecord[] = [];
+
+  return new Promise((resolve, reject) => {
+    base(tableName)
+      .select({
+        maxRecords: 250,
+        view: 'Grid view',
+        ...(filter && { filterByFormula: filter }),
+      })
+      .eachPage(
+        function page(records, fetchNextPage) {
+          for (const submission of records) {
+            const url = submission.get('URL');
+            const sender = submission.get('Sender');
+            const approved = !!submission.get('Approved');
+
+            if (typeof url === 'string' && typeof sender === 'string') {
+              results.push({
+                url,
+                sender,
+                approved,
+              });
+            }
+          }
+          fetchNextPage();
+        },
+        function done(err: any) {
+          if (err) {
+            console.error(err);
+            reject(err);
+          }
+
+          resolve(results);
+        },
+      );
+  });
+}
+
+async function main() {
+  // await downloadValentines();
+  // await transcodeValentines();
+  // uploadValentines();
+  // sendValentines();
+  // sendValentines2();
+  // markValentinesAsSent();
+  // sendSingleValentine();
+  // await remindOldUsers();
+}
+
+main();
