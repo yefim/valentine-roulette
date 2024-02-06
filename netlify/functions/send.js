@@ -60,8 +60,12 @@ async function handler(event, _context) {
 
   if (event.httpMethod !== 'POST') {
     return {
-      statusCode: 404,
-      body: `Try sending a POST. You sent a ${event.httpMethod}.`,
+      statusCode: 302,
+      headers: {
+        'Location': 'https://valentineroulette.com/send',
+        'Cache-Control': 'no-cache',
+      },
+      body: JSON.stringify({}),
     };
   }
 

@@ -1,5 +1,5 @@
 [[redirects]]
-  from = "/api/send"
-  to = "/.netlify/functions/send"
+  from = "/api/*"
+  to = "/.netlify/functions/*"
   status = 200
   force = true
