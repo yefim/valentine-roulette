@@ -9,5 +9,6 @@ Send some anonymous love and get some in return this Valentine's Day.
 ```
 npm install
 npm start
+npm run backend
 open http://localhost:1234/
 ```
