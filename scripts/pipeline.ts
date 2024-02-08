@@ -493,30 +493,39 @@ const sendSingleValentine = async () => {
 
 async function remindOldUsers() {
   const copy =
-    'hey friends and lovers, we loved your voice so much last year that we hope you send another voice note valentine at valentineroulette.com this year! make a stranger’s vday special 💌';
-  // const allUsers = await fetchAllRecords('2024');
-  const allUsers: VRecord[] = [
-    {
-      sender: '2132547530',
-      approved: false,
-      url: 'test',
-    },
-  ];
+    '💘 hey friends and lovers, last vday your voice made hearts flutter ! record a new voicenote valentine at valentineroulette.com';
+  const oldUsers = await fetchAllRecords('2023');
+  const newUsers = await fetchAllRecords('2024');
 
-  const digits = [...new Set(allUsers.map((u) => u.sender))];
+  const oldDigits = oldUsers.map((u) => u.sender);
+  const newDigits = newUsers.map((u) => u.sender);
 
-  console.log(allUsers.filter((u) => u.approved).length);
-  console.log(allUsers.length);
-  console.log(digits.length);
+  let diff = _.difference(oldDigits, newDigits);
+  diff = _.uniq(diff);
+  console.log(chalk.green(`Sending to ${diff.length} numbers...`));
 
-  return;
-  for (const to of digits) {
-    await client.messages.create({
-      body: copy,
-      from: '+12294083291',
-      to: `+1${to}`,
-    });
+  for (let i = 0; i < diff.length; i++) {
+    const to = diff[i];
+    try {
+      await client.messages.create({
+        body: copy,
+        from: '+12294083291',
+        to: `+1${to}`,
+      });
+
+      console.log(chalk.green(`[${i + 1}/${diff.length}] Sent to ${to}`));
+
+      await sleep(1000);
+    } catch (_e) {
+      console.log(chalk.red(`[error] Could not reach ${to}`));
+    }
   }
+}
+
+async function sleep(n: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), n);
+  });
 }
 
 async function fetchAllRecords(
