@@ -90,15 +90,15 @@ async function startRecording() {
     workerDir: 'public/', // must end with slash
     encoding: 'mp3',
     numChannels: 2, //2 is the default, mp3 encoding supports only 2
-    onEncoderLoading: function(_recorder, encoding) {
+    onEncoderLoading: function (_recorder, encoding) {
       console.log('Loading ' + encoding + ' encoder...');
     },
-    onEncoderLoaded: function(_recorder, encoding) {
+    onEncoderLoaded: function (_recorder, encoding) {
       console.log(encoding + ' encoder loaded');
     },
   });
 
-  recorder.onComplete = function(_recorder, blob) {
+  recorder.onComplete = function (_recorder, blob) {
     console.log('Encoding complete');
 
     handleEncoding(blob);
@@ -171,12 +171,6 @@ $recordButton.addEventListener('click', async (_e) => {
     stopPlayback();
   }
 });
-
-for (const $fun of document.querySelectorAll('.fun')) {
-  $fun.addEventListener('click', (e) => {
-    createHearts(e.target);
-  });
-}
 
 $form.addEventListener('submit', (e) => {
   if (currentState === STATES.recording) {
