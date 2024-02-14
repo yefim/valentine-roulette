@@ -411,7 +411,6 @@ async function uploadValentines() {
   for (const file of files) {
     if (file.split('.').at(-1) !== 'mp4') continue;
     const content = fs.readFileSync(`./transcodes/${file}`);
-    console.log(`Uploading ${file}...`);
     uploaded++;
 
     // Remove check if we're replacing files
@@ -431,7 +430,10 @@ async function uploadValentines() {
         },
       );
 
-    if (!exists) {
+    if (exists) {
+      console.log(chalk.yellow(`Skipping ${file}...`));
+    } else {
+      console.log(chalk.green(`Uploading ${file}...`));
       s3.upload({
         Bucket: 'valentine-roulette-converted',
         Key: file,
