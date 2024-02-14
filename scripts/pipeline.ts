@@ -180,6 +180,10 @@ async function downloadValentines() {
 
   console.log(`Found ${allSubmissions.length} approved submissions...`);
 
+  if (!fs.existsSync('./notes')) {
+    fs.mkdirSync('./notes');
+  }
+
   for (const { url } of allSubmissions) {
     const filename = url.split('/').at(-1);
     const destination = `./notes/${filename.split('---').at(-1)}`;
@@ -278,6 +282,10 @@ async function transcodeValentines() {
     return fs.statSync(`./notes/${a}`).size - fs.statSync(`./notes/${b}`).size;
   });
 
+  if (!fs.existsSync('./transcodes')) {
+    fs.mkdirSync('./transcodes');
+  }
+
   // for (const file of files.slice(0, 2)) {
   for (const file of files) {
     const name = file.split('.').at(0);
@@ -293,7 +301,7 @@ async function transcodeValentines() {
   }
 }
 
-const uploadValentines = async () => {
+async function uploadValentines() {
   const files = fs.readdirSync('./transcodes');
   let uploaded = 0;
 
@@ -339,8 +347,8 @@ const uploadValentines = async () => {
     }
   }
 
-  console.log(`Uploaded: ${uploaded}`);
-};
+  console.log(chalk.green(`Uploaded: ${uploaded}`));
+}
 
 const markValentinesAsSent = async () => {
   let sent = 0;
@@ -471,14 +479,11 @@ const sendValentines2 = async () => {
     );
 };
 
-const sendSingleValentine = async () => {
-  const to = '';
-  const url = '';
-
-  client.messages
+async function sendSingleValentine(to: string, url: string): Promise<void> {
+  return client.messages
     .create({
-      body: copy2,
-      from: '+13476577597',
+      body: copy,
+      from: '+12294083291',
       mediaUrl: [url],
       to: `+1${to}`,
     })
@@ -489,7 +494,7 @@ const sendSingleValentine = async () => {
       console.log(e);
       console.log(chalk.red(`Could not reach ${to}`));
     });
-};
+}
 
 async function remindOldUsers() {
   const copy =
@@ -577,7 +582,7 @@ async function main() {
   // sendValentines();
   // sendValentines2();
   // markValentinesAsSent();
-  // sendSingleValentine();
+  // await sendSingleValentine();
   // await remindOldUsers();
 }
 
