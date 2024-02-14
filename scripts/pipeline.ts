@@ -6,7 +6,7 @@ const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN,
 );
-import _ from 'lodash';
+import _, { sample } from 'lodash';
 import fs from 'fs';
 
 import AWS from 'aws-sdk';
@@ -174,6 +174,100 @@ const sendValentines = async () => {
       },
     );
 };
+
+async function sendValentines3() {
+  const allSubmissions = await fetchAllRecords('2024');
+  const senderToValentine: { [sender: string]: string[] } = {};
+  const recipients = new Set<string>();
+  const approvedValentines: string[] = [];
+  const approvedSenders = new Set<string>();
+  let sent: string[] = [];
+
+  const matches: { [to: string]: string } = {};
+
+  for (const { sender, url, approved } of allSubmissions) {
+    recipients.add(sender);
+
+    if (approved) {
+      approvedValentines.push(url);
+      approvedSenders.add(sender);
+    }
+
+    senderToValentine[sender] = senderToValentine[sender] || [];
+    senderToValentine[sender].push(url);
+  }
+
+  console.log(`approved length: ${approvedValentines.length}`);
+  console.log(`recipients size: ${recipients.size}`);
+  console.log(`unique senders: ${approvedSenders.size}`);
+
+  console.log(chalk.yellow('Calculating matches...'));
+  // for (const to of []) {
+  for (const to of recipients) {
+    let match: string | undefined = undefined;
+    while (true) {
+      match = sample(approvedValentines);
+      if (sent.includes(match) || senderToValentine[to]?.includes(match)) {
+        continue;
+      }
+      sent.push(match);
+      matches[to] = match;
+      if (sent.length === approvedValentines.length) {
+        sent = [];
+      }
+      break;
+    }
+  }
+
+  console.log(
+    chalk.green(
+      `Calculated ${Object.keys(matches).length} matches, ready to verify!`,
+    ),
+  );
+
+  console.log(chalk.yellow('Verifying URLs...'));
+  for (const url of Object.values(matches)) {
+    const filename = url.split('---').at(-1).split('.').at(0) + '.mp4';
+
+    const exists = await s3
+      .headObject({
+        Bucket: 'valentine-roulette-converted',
+        Key: filename,
+      })
+      .promise()
+      .then(
+        () => true,
+        (err: any) => {
+          if (err.code === 'NotFound') {
+            return false;
+          }
+          throw err;
+        },
+      );
+    if (!exists) {
+      console.log(chalk.red(`404 - Video not found for ${url}`));
+      return;
+    }
+  }
+  console.log(chalk.green('Verified, ready to send!'));
+
+  console.log(chalk.yellow('Sending...'));
+  let count = 0;
+  for (const [to, url] of Object.entries(matches)) {
+    const filename = url.split('---').at(-1).split('.').at(0) + '.mp4';
+    const videoUrl = `https://valentine-roulette-converted.s3.amazonaws.com/${filename}`;
+    count++;
+
+    try {
+      await sendSingleValentine(to, videoUrl);
+      console.log(chalk.green(`[${count}] Sent ${videoUrl} to ${to}`));
+    } catch (e) {
+      console.log(chalk.red(`[${count}]Could not send ${videoUrl} to ${to}`));
+    }
+  }
+
+  console.log(chalk.green('DONE!!!'));
+}
 
 async function downloadValentines() {
   const allSubmissions = await fetchAllRecords('2024', '{Approved} = TRUE()');
@@ -479,21 +573,22 @@ const sendValentines2 = async () => {
     );
 };
 
-async function sendSingleValentine(to: string, url: string): Promise<void> {
-  return client.messages
-    .create({
-      body: copy,
-      from: '+12294083291',
-      mediaUrl: [url],
-      to: `+1${to}`,
-    })
-    .then(() => {
-      console.log(`Sent ${url} to ${to}`);
-    })
-    .catch((e: any) => {
-      console.log(e);
-      console.log(chalk.red(`Could not reach ${to}`));
-    });
+async function sendSingleValentine(to: string, url: string): Promise<unknown> {
+  return client.messages.create({
+    body: copy,
+    from: '+12294083291',
+    mediaUrl: [url],
+    to: `+1${to}`,
+  });
+  /*
+  .then(() => {
+    console.log(`Sent ${url} to ${to}`);
+  })
+  .catch((e: any) => {
+    console.log(e);
+    console.log(chalk.red(`Could not reach ${to}`));
+  });
+  */
 }
 
 async function remindOldUsers() {
@@ -584,6 +679,7 @@ async function main() {
   // markValentinesAsSent();
   // await sendSingleValentine();
   // await remindOldUsers();
+  // await sendValentines3();
 }
 
 main();
