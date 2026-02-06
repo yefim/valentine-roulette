@@ -1,6 +1,6 @@
 import { createHearts } from './hearts';
 import RecordRTC, { StereoAudioRecorder } from 'recordrtc';
-import lamejs from 'lamejs';
+import lamejs from '@breezystack/lamejs';
 
 import * as Sentry from '@sentry/browser';
 
@@ -162,7 +162,11 @@ async function startRecording() {
     desiredSampRate: 44100,
   });
 
-  recorder.setRecordingDuration(5 * 60 * 1000);
+  recorder.setRecordingDuration(5 * 60 * 1000).onRecordingStopped(function () {
+    if (currentState === STATES.recording) {
+      stopRecording({ alreadyStopped: true });
+    }
+  });
   recorder.startRecording();
 }
 
@@ -181,7 +185,14 @@ function handleEncoding(blob) {
   createHearts($submitButton);
 }
 
-function stopRecording() {
+async function onRecorderStopped() {
+  const wavBlob = recorder.getBlob();
+  $playbackAudio.src = window.URL.createObjectURL(wavBlob);
+  const mp3Blob = await convertWavBlobToMp3(wavBlob);
+  handleEncoding(mp3Blob);
+}
+
+function stopRecording({ alreadyStopped = false } = {}) {
   console.log('stopRecording()');
   const phrases = ['You rock!', 'Awww so sweet!', 'That was cute!'];
   const $yay = document.querySelector('.yay');
@@ -193,16 +204,11 @@ function stopRecording() {
   currentState = STATES.finishedRecording;
   $recordImg.className = 'play';
 
-  recorder.stopRecording(async function() {
-    const wavBlob = recorder.getBlob();
-
-    // Set WAV for immediate playback
-    $playbackAudio.src = window.URL.createObjectURL(wavBlob);
-
-    // Convert to MP3 for smaller upload
-    const mp3Blob = await convertWavBlobToMp3(wavBlob);
-    handleEncoding(mp3Blob);
-  });
+  if (alreadyStopped) {
+    onRecorderStopped();
+  } else {
+    recorder.stopRecording(onRecorderStopped);
+  }
 }
 
 function playbackRecording() {
