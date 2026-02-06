@@ -389,11 +389,11 @@ section.record {
     margin-bottom: 24px;
   }
 
-  button[type='submit'] {
+  button:not([type='button']) {
     min-width: 220px;
 
     &:disabled {
-      opacity: 0.5;
+      opacity: 0.8;
     }
   }
 }
