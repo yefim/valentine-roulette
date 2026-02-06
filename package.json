@@ -11,11 +11,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@parcel/packager-raw-url": "2.11.0",
-    "@parcel/transformer-jsonld": "2.11.0",
-    "@parcel/transformer-sass": "2.11.0",
+    "@parcel/packager-raw-url": "2.16.4",
+    "@parcel/transformer-jsonld": "2.16.4",
+    "@parcel/transformer-sass": "2.16.4",
     "http-proxy-middleware": "2.0.6",
-    "parcel": "2.11.0",
+    "parcel": "2.16.4",
     "posthtml-include": "2.0.1",
     "process": "0.11.10"
   },
