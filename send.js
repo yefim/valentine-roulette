@@ -39,7 +39,7 @@ $playbackAudio.addEventListener('ended', (_e) => {
 
 const $form = document.querySelector('form');
 const $fileInput = $form.querySelector('[type="file"]');
-const $submitButton = $form.querySelector('[type="submit"]');
+const $submitButton = $form.querySelector('button:not([type="button"])');
 $submitButton.disabled = false; // reset the button to enabled
 $submitButton.innerText = 'Send it'; // reset the button text
 
@@ -68,7 +68,7 @@ function findDataChunk(buffer) {
 function convertWavBlobToMp3(wavBlob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = function () {
+    reader.onload = function() {
       const dataOffset = findDataChunk(this.result);
       const wavBuffer = new Int16Array(this.result, dataOffset);
       const dataView = new DataView(this.result);
@@ -193,7 +193,7 @@ function stopRecording() {
   currentState = STATES.finishedRecording;
   $recordImg.className = 'play';
 
-  recorder.stopRecording(async function () {
+  recorder.stopRecording(async function() {
     const wavBlob = recorder.getBlob();
 
     // Set WAV for immediate playback
