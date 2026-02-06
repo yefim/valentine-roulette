@@ -162,7 +162,7 @@ async function startRecording() {
     desiredSampRate: 44100,
   });
 
-  recorder.setRecordingDuration(5 * 60 * 1000).onRecordingStopped(function () {
+  recorder.setRecordingDuration(3 * 60 * 1000).onRecordingStopped(function () {
     if (currentState === STATES.recording) {
       stopRecording({ alreadyStopped: true });
     }
