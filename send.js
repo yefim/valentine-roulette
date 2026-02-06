@@ -46,11 +46,31 @@ $submitButton.innerText = 'Send it'; // reset the button text
 let audioStream = null;
 let recorder = null;
 
+function findDataChunk(buffer) {
+  const view = new DataView(buffer);
+  let offset = 12; // skip RIFF header (4) + size (4) + WAVE (4)
+  while (offset < view.byteLength - 8) {
+    const id = String.fromCharCode(
+      view.getUint8(offset),
+      view.getUint8(offset + 1),
+      view.getUint8(offset + 2),
+      view.getUint8(offset + 3),
+    );
+    const size = view.getUint32(offset + 4, true);
+    if (id === 'data') {
+      return offset + 8;
+    }
+    offset += 8 + size;
+  }
+  return 44; // fallback to standard offset
+}
+
 function convertWavBlobToMp3(wavBlob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = function () {
-      const wavBuffer = new Int16Array(this.result, 44); // skip 44-byte WAV header
+      const dataOffset = findDataChunk(this.result);
+      const wavBuffer = new Int16Array(this.result, dataOffset);
       const dataView = new DataView(this.result);
       const numChannels = dataView.getUint16(22, true);
       const sampleRate = dataView.getUint32(24, true);
