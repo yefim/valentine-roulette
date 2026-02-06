@@ -23,7 +23,7 @@
     "@sentry/browser": "7.120.4",
     "aws-sdk": "2.1538.0",
     "busboy": "1.6.0",
-    "serve-static": "1.15.0",
+    "serve-static": "1.16.3",
     "uuid": "9.0.1"
   }
 }
