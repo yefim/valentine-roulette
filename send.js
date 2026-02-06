@@ -132,7 +132,10 @@ function handleEncoding(blob) {
 
 function stopRecording() {
   console.log('stopRecording()');
-  document.querySelector('.yay').style.visibility = 'visible';
+  const phrases = ['You rock!', 'Awww so sweet!', 'That was cute!'];
+  const $yay = document.querySelector('.yay');
+  $yay.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+  $yay.style.visibility = 'visible';
   $pulse.style.display = 'none';
   $statusText.style.visibility = 'hidden';
 
