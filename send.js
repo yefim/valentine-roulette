@@ -68,7 +68,7 @@ function findDataChunk(buffer) {
 function convertWavBlobToMp3(wavBlob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = function() {
+    reader.onload = function () {
       const dataOffset = findDataChunk(this.result);
       const wavBuffer = new Int16Array(this.result, dataOffset);
       const dataView = new DataView(this.result);
