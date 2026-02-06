@@ -1,4 +1,6 @@
 import { createHearts } from './hearts';
+import RecordRTC, { StereoAudioRecorder } from 'recordrtc';
+import lamejs from 'lamejs';
 
 import * as Sentry from '@sentry/browser';
 
@@ -42,8 +44,59 @@ $submitButton.disabled = false; // reset the button to enabled
 $submitButton.innerText = 'Send it'; // reset the button text
 
 let audioStream = null;
-let audioContext = null;
 let recorder = null;
+
+function convertWavBlobToMp3(wavBlob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = function () {
+      const wavBuffer = new Int16Array(this.result, 44); // skip 44-byte WAV header
+      const dataView = new DataView(this.result);
+      const numChannels = dataView.getUint16(22, true);
+      const sampleRate = dataView.getUint32(24, true);
+
+      const mp3Encoder = new lamejs.Mp3Encoder(numChannels, sampleRate, 192);
+      const mp3Data = [];
+
+      const blockSize = 1152;
+
+      if (numChannels === 2) {
+        const left = new Int16Array(wavBuffer.length / 2);
+        const right = new Int16Array(wavBuffer.length / 2);
+        for (let i = 0; i < wavBuffer.length; i += 2) {
+          left[i / 2] = wavBuffer[i];
+          right[i / 2] = wavBuffer[i + 1];
+        }
+
+        for (let i = 0; i < left.length; i += blockSize) {
+          const leftChunk = left.subarray(i, i + blockSize);
+          const rightChunk = right.subarray(i, i + blockSize);
+          const mp3buf = mp3Encoder.encodeBuffer(leftChunk, rightChunk);
+          if (mp3buf.length > 0) {
+            mp3Data.push(mp3buf);
+          }
+        }
+      } else {
+        for (let i = 0; i < wavBuffer.length; i += blockSize) {
+          const chunk = wavBuffer.subarray(i, i + blockSize);
+          const mp3buf = mp3Encoder.encodeBuffer(chunk);
+          if (mp3buf.length > 0) {
+            mp3Data.push(mp3buf);
+          }
+        }
+      }
+
+      const end = mp3Encoder.flush();
+      if (end.length > 0) {
+        mp3Data.push(end);
+      }
+
+      resolve(new Blob(mp3Data, { type: 'audio/mp3' }));
+    };
+    reader.onerror = reject;
+    reader.readAsArrayBuffer(wavBlob);
+  });
+}
 
 async function startRecording() {
   console.log('startRecording()');
@@ -76,46 +129,24 @@ async function startRecording() {
   }
 
   $statusText.innerText = 'Recording!!!';
-  // $statusText.style.visibility = 'hidden';
   $recordImg.className = 'stop';
   currentState = STATES.recording;
 
   $pulse.style.display = 'block';
 
-  audioContext = new AudioContext();
-
-  const input = audioContext.createMediaStreamSource(audioStream);
-
-  recorder = new WebAudioRecorder(input, {
-    workerDir: 'public/', // must end with slash
-    encoding: 'mp3',
-    numChannels: 2, //2 is the default, mp3 encoding supports only 2
-    onEncoderLoading: function (_recorder, encoding) {
-      console.log('Loading ' + encoding + ' encoder...');
-    },
-    onEncoderLoaded: function (_recorder, encoding) {
-      console.log(encoding + ' encoder loaded');
-    },
+  recorder = new RecordRTC(audioStream, {
+    type: 'audio',
+    recorderType: StereoAudioRecorder,
+    mimeType: 'audio/wav',
+    numberOfAudioChannels: 2,
+    desiredSampRate: 44100,
   });
 
-  recorder.onComplete = function (_recorder, blob) {
-    console.log('Encoding complete');
-
-    handleEncoding(blob);
-  };
-
-  recorder.setOptions({
-    timeLimit: 60 * 5, // 5 minutes
-    encodeAfterRecord: true,
-    mp3: { bitRate: 160 },
-  });
-
+  recorder.setRecordingDuration(5 * 60 * 1000);
   recorder.startRecording();
 }
 
 function handleEncoding(blob) {
-  $playbackAudio.src = window.URL.createObjectURL(blob);
-
   audioStream &&
     audioStream.getTracks().forEach((track) => {
       track.stop();
@@ -142,7 +173,16 @@ function stopRecording() {
   currentState = STATES.finishedRecording;
   $recordImg.className = 'play';
 
-  recorder.finishRecording();
+  recorder.stopRecording(async function () {
+    const wavBlob = recorder.getBlob();
+
+    // Set WAV for immediate playback
+    $playbackAudio.src = window.URL.createObjectURL(wavBlob);
+
+    // Convert to MP3 for smaller upload
+    const mp3Blob = await convertWavBlobToMp3(wavBlob);
+    handleEncoding(mp3Blob);
+  });
 }
 
 function playbackRecording() {
@@ -180,9 +220,12 @@ $form.addEventListener('submit', (e) => {
     e.preventDefault();
     stopRecording();
 
-    setTimeout(() => {
-      $form.submit();
-    }, 600);
+    const pollInterval = setInterval(() => {
+      if ($fileInput.files.length > 0) {
+        clearInterval(pollInterval);
+        $form.submit();
+      }
+    }, 100);
 
     return false;
   }

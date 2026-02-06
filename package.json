@@ -23,6 +23,8 @@
     "@sentry/browser": "7.120.4",
     "aws-sdk": "2.1538.0",
     "busboy": "1.6.0",
+    "lamejs": "^1.2.1",
+    "recordrtc": "^5.6.2",
     "serve-static": "1.15.0",
     "uuid": "9.0.1"
   }
