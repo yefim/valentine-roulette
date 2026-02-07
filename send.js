@@ -37,6 +37,9 @@ allAudios.forEach((audio) => {
     allAudios.forEach((other) => {
       if (other !== audio) other.pause();
     });
+    if (audio !== $playbackAudio && currentState === STATES.playing) {
+      stopPlayback();
+    }
   });
 });
 
