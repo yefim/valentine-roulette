@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const Airtable = require('airtable');
 const uuid = require('uuid');
 const Busboy = require('busboy');
 
@@ -88,13 +89,15 @@ async function handler(event, _context) {
     secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
   });
 
+  const key = `${digits}---${uuid.v4()}.mp3`;
+
   try {
     await s3
       .upload({
         Bucket: 'valentine-roulette',
-        Key: `${digits}---${uuid.v4()}.mp3`,
+        Key: key,
         Body: fields.file.content,
-        ACL: 'private',
+        ACL: 'public-read',
       })
       .promise();
   } catch (e) {
@@ -102,6 +105,23 @@ async function handler(event, _context) {
       statusCode: 400,
       body: 'Something went wrong. Please go back, refresh, and try again. Make sure your phone number is 10 digits and your voice note is recorded.',
     };
+  }
+
+  // Best-effort Airtable logging
+  try {
+    const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
+      process.env.AIRTABLE_VDAY_BASE,
+    );
+    const s3Url = `https://valentine-roulette.s3.us-east-1.amazonaws.com/${key}`;
+    const sender = digits.length === 10 ? `+1${digits}` : `+${digits}`;
+    await base('2026').create({
+      Sender: sender,
+      URL: s3Url,
+      Timestamp: new Date().toISOString(),
+      Voicenote: [{ url: s3Url }],
+    });
+  } catch (e) {
+    console.error('Airtable write failed:', e);
   }
 
   return {
