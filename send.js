@@ -31,6 +31,15 @@ const $statusText = $recordButton.querySelector('span.status');
 const $pulse = $recordButton.querySelector('.pulse');
 const $playbackAudio = document.querySelector('audio');
 
+const allAudios = document.querySelectorAll('audio');
+allAudios.forEach((audio) => {
+  audio.addEventListener('play', () => {
+    allAudios.forEach((other) => {
+      if (other !== audio) other.pause();
+    });
+  });
+});
+
 $playbackAudio.addEventListener('ended', (_e) => {
   $pulse.style.display = 'none';
   $recordImg.className = 'play';
