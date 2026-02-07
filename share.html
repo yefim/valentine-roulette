@@ -66,6 +66,7 @@
       }
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
+        window._paq && _paq.push(['trackEvent', 'Share', 'Invite Click', 'Post-Submit']);
         if (!navigator.share) {
           window.location.href =
             'https://twitter.com/intent/tweet?url=https%3A%2F%2Fvoice-note-valentine.com';

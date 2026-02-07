@@ -288,6 +288,7 @@
       }
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
+        window._paq && _paq.push(['trackEvent', 'Share', 'Invite Click', 'Home']);
         if (!navigator.share) return;
 
         navigator
