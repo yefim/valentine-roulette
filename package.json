@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@breezystack/lamejs": "^1.2.7",
-    "@sentry/browser": "7.120.4",
+    "@sentry/browser": "10.38.0",
     "airtable": "0.12.2",
     "aws-sdk": "2.1538.0",
     "busboy": "1.6.0",
