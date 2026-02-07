@@ -104,20 +104,10 @@ async function handler(event, _context) {
     };
   }
 
-  const objects = await s3
-    .listObjectsV2({
-      Bucket: 'valentine-roulette',
-      Prefix: '',
-      Delimiter: '/',
-    })
-    .promise();
-
-  const numberOfObjects = objects.Contents?.length ?? 0;
-
   return {
     statusCode: 302,
     headers: {
-      'Location': `https://voice-note-valentine.com/share?count=${numberOfObjects}`,
+      'Location': 'https://voice-note-valentine.com/share',
       'Cache-Control': 'no-cache',
     },
     body: JSON.stringify({}),
