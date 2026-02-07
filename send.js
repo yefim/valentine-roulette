@@ -64,6 +64,7 @@ document.querySelectorAll('.example audio').forEach((audio) => {
   audio.after(player);
 
   btn.addEventListener('click', () => {
+    if (currentState === STATES.recording) return;
     if (audio.paused) {
       audio.play();
     } else {
