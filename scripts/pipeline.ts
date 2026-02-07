@@ -595,7 +595,7 @@ async function sendSingleValentine(to: string, url: string): Promise<unknown> {
 
 async function remindOldUsers() {
   const copy =
-    '💘 hey friends and lovers, last vday your voice made hearts flutter ! record a new voice note valentine at valentineroulette.com';
+    '💘 hey friends and lovers, last vday your voice made hearts flutter ! record a new voice note valentine at voice-note-valentine.com';
   const oldUsers = await fetchAllRecords('2023');
   const newUsers = await fetchAllRecords('2024');
 

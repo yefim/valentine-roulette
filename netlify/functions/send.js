@@ -62,7 +62,7 @@ async function handler(event, _context) {
     return {
       statusCode: 302,
       headers: {
-        'Location': 'https://valentineroulette.com/send',
+        'Location': 'https://voice-note-valentine.com/send',
         'Cache-Control': 'no-cache',
       },
       body: JSON.stringify({}),
@@ -117,7 +117,7 @@ async function handler(event, _context) {
   return {
     statusCode: 302,
     headers: {
-      'Location': `https://valentineroulette.com/share?count=${numberOfObjects}`,
+      'Location': `https://voice-note-valentine.com/share?count=${numberOfObjects}`,
       'Cache-Control': 'no-cache',
     },
     body: JSON.stringify({}),
