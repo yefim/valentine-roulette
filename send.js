@@ -40,6 +40,67 @@ allAudios.forEach((audio) => {
   });
 });
 
+const PLAY_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><polygon points="3,0 16,8 3,16"/></svg>';
+const PAUSE_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><rect x="1" y="0" width="5" height="16"/><rect x="10" y="0" width="5" height="16"/></svg>';
+
+document.querySelectorAll('.example audio').forEach((audio) => {
+  const player = document.createElement('div');
+  player.className = 'audio-player';
+
+  const btn = document.createElement('button');
+  btn.className = 'audio-player-btn';
+  btn.type = 'button';
+  btn.setAttribute('aria-label', 'Play');
+  btn.innerHTML = PLAY_ICON;
+
+  const progress = document.createElement('div');
+  progress.className = 'audio-player-progress';
+  const fill = document.createElement('div');
+  fill.className = 'audio-player-progress-fill';
+  progress.appendChild(fill);
+
+  player.appendChild(btn);
+  player.appendChild(progress);
+  audio.after(player);
+
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener('play', () => {
+    btn.innerHTML = PAUSE_ICON;
+    btn.setAttribute('aria-label', 'Pause');
+  });
+
+  audio.addEventListener('pause', () => {
+    btn.innerHTML = PLAY_ICON;
+    btn.setAttribute('aria-label', 'Play');
+  });
+
+  audio.addEventListener('ended', () => {
+    btn.innerHTML = PLAY_ICON;
+    btn.setAttribute('aria-label', 'Play');
+    fill.style.width = '0%';
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (audio.duration) {
+      fill.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+    }
+  });
+
+  progress.addEventListener('click', (e) => {
+    if (audio.duration) {
+      const ratio = e.offsetX / progress.offsetWidth;
+      audio.currentTime = ratio * audio.duration;
+    }
+  });
+});
+
 $playbackAudio.addEventListener('ended', (_e) => {
   $pulse.style.display = 'none';
   $recordImg.className = 'play';
