@@ -114,11 +114,19 @@ async function handler(event, _context) {
     );
     const s3Url = `https://valentine-roulette.s3.us-east-1.amazonaws.com/${key}`;
     const sender = digits.length === 10 ? `+1${digits}` : `+${digits}`;
-    await base('2026').create({
-      Sender: sender,
-      URL: s3Url,
-      Timestamp: new Date().toISOString(),
-      Voicenote: [{ url: s3Url }],
+    await new Promise((resolve, reject) => {
+      base('2026').create(
+        {
+          Sender: sender,
+          URL: s3Url,
+          Timestamp: new Date().toISOString(),
+          Voicenote: [{ url: s3Url }],
+        },
+        (err, record) => {
+          if (err) reject(err);
+          else resolve(record);
+        },
+      );
     });
   } catch (e) {
     console.error('Airtable write failed:', e);
