@@ -32,10 +32,10 @@ Airtable.configure({
 const base = Airtable.base(process.env.AIRTABLE_VDAY_BASE ?? '');
 
 const copy =
-  "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Valentine Roulette Team";
+  "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Voice Note Valentine Team";
 
 const copy2 =
-  "Here's a day-late dose of love. Please accept Cupid's apology for running behind. But, hey, love doesn't end after Feb 14! <3 The Valentine Roulette Team";
+  "Here's a day-late dose of love. Please accept Cupid's apology for running behind. But, hey, love doesn't end after Feb 14! <3 The Voice Note Valentine Team";
 
 /*
 
@@ -595,7 +595,7 @@ async function sendSingleValentine(to: string, url: string): Promise<unknown> {
 
 async function remindOldUsers() {
   const copy =
-    '💘 hey friends and lovers, last vday your voice made hearts flutter ! record a new voicenote valentine at valentineroulette.com';
+    '💘 hey friends and lovers, last vday your voice made hearts flutter ! record a new voice note valentine at valentineroulette.com';
   const oldUsers = await fetchAllRecords('2023');
   const newUsers = await fetchAllRecords('2024');
 

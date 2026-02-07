@@ -1,4 +1,4 @@
-## Valentine Roulette
+## Voice Note Valentine
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/5c6f70ef-8ddc-444b-a897-e29ed19f37e0/deploy-status)](https://app.netlify.com/sites/valentine-roulette/deploys)
 
