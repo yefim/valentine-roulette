@@ -107,6 +107,9 @@ async function handler(event, _context) {
   }
 
   // Best-effort Airtable logging
+  if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_VDAY_BASE) {
+    console.warn('Airtable env vars missing, skipping write');
+  }
   try {
     const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(
       process.env.AIRTABLE_VDAY_BASE,
@@ -128,7 +131,7 @@ async function handler(event, _context) {
       );
     });
   } catch (e) {
-    console.error('Airtable write failed:', e);
+    console.error('Airtable write failed:', e.message, e.statusCode, JSON.stringify(e));
   }
 
   return {
