@@ -300,6 +300,7 @@ function stopPlayback() {
 }
 
 $recordButton.addEventListener('click', async (_e) => {
+  allAudios.forEach((audio) => audio.pause());
   if (currentState === STATES.initial) {
     startRecording();
   } else if (currentState === STATES.recording) {
