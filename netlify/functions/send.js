@@ -97,7 +97,6 @@ async function handler(event, _context) {
         Bucket: 'valentine-roulette',
         Key: key,
         Body: fields.file.content,
-        ACL: 'public-read',
       })
       .promise();
   } catch (e) {
