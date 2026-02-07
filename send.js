@@ -194,7 +194,7 @@ async function onRecorderStopped() {
 
 function stopRecording({ alreadyStopped = false } = {}) {
   console.log('stopRecording()');
-  const phrases = ['You rock!', 'Awww so sweet!', 'That was cute!'];
+  const phrases = ['You rock!', 'Awww so sweet!', 'That was cute!', '<3 <3 <3', 'What a sweet thing to say!'];
   const $yay = document.querySelector('.yay');
   $yay.textContent = phrases[Math.floor(Math.random() * phrases.length)];
   $yay.style.visibility = 'visible';
