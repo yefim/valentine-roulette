@@ -300,6 +300,44 @@ section.faq {
   }
 }
 
+section.examples {
+  padding: 60px 20px;
+
+  h2 {
+    font-family: 'Poppins', Helvetica, sans-serif;
+    font-size: 35px;
+    line-height: 1;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  p {
+    font-family: 'Montagu Slab', serif;
+    text-align: center;
+    margin: 0 auto 36px auto;
+  }
+
+  .example-list {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    h3 {
+      font-family: 'Poppins', Helvetica, sans-serif;
+      font-size: 20px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    audio {
+      width: 100%;
+    }
+  }
+}
+
 section.phonenumber {
   padding: 50px 0 40px 0;
 
