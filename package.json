@@ -5,7 +5,7 @@
   "scripts": {
     "start": "parcel index.html send.html share.html",
     "backend": "netlify dev -d app/build/ --debug",
-    "build": "parcel build index.html send.html share.html && cp -r public/ dist/public"
+    "build": "parcel build index.html send.html share.html && cp -r public/ dist/"
   },
   "keywords": [],
   "author": "",
