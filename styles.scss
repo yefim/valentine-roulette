@@ -115,7 +115,7 @@ section.top {
 section.howto {
   display: flex;
   flex-direction: column;
-  padding: 40px 0 20px 0;
+  padding: 40px 16px 20px 16px;
 
   h2 {
     font-family: 'Poppins', Helvetica, sans-serif;
@@ -134,10 +134,19 @@ section.howto {
   }
 
   .steps {
-    max-width: 800px;
+    max-width: 920px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
+
+    @media only screen and (min-width: 960px) {
+      flex-direction: row;
+      gap: 24px;
+
+      >div {
+        flex: 1;
+      }
+    }
 
     img {
       object-fit: cover;
