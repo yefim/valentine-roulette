@@ -29,12 +29,12 @@ const $recordButton = document.querySelector('.record-button');
 const $recordImg = $recordButton.querySelector('img');
 const $statusText = $recordButton.querySelector('span.status');
 const $pulse = $recordButton.querySelector('.pulse');
-const $playbackAudio = document.querySelector('audio');
+const $playbackAudio = document.getElementById('playback');
 
-const allAudios = document.querySelectorAll('audio');
-allAudios.forEach((audio) => {
+const $allAudios = document.querySelectorAll('audio');
+$allAudios.forEach((audio) => {
   audio.addEventListener('play', () => {
-    allAudios.forEach((other) => {
+    $allAudios.forEach((other) => {
       if (other !== audio) other.pause();
     });
     if (audio !== $playbackAudio && currentState === STATES.playing) {
@@ -304,7 +304,7 @@ function stopPlayback() {
 }
 
 $recordButton.addEventListener('click', async (_e) => {
-  allAudios.forEach((audio) => audio.pause());
+  $allAudios.forEach((audio) => audio.pause());
   if (currentState === STATES.initial) {
     startRecording();
   } else if (currentState === STATES.recording) {
