@@ -46,7 +46,8 @@ $allAudios.forEach((audio) => {
 const PLAY_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><polygon points="3,0 16,8 3,16"/></svg>';
 const PAUSE_ICON = '<svg width="16" height="16" viewBox="0 0 16 16" fill="white"><rect x="1" y="0" width="5" height="16"/><rect x="10" y="0" width="5" height="16"/></svg>';
 
-document.querySelectorAll('.example audio').forEach((audio) => {
+document.querySelectorAll('.example audio').forEach((audio, i) => {
+  const exampleTitle = audio.closest('.example')?.querySelector('h3')?.textContent || `Example ${i + 1}`;
   const player = document.createElement('div');
   player.className = 'audio-player';
 
@@ -69,6 +70,7 @@ document.querySelectorAll('.example audio').forEach((audio) => {
   btn.addEventListener('click', () => {
     if (currentState === STATES.recording) return;
     if (audio.paused) {
+      window._paq && _paq.push(['trackEvent', 'Example Audio', 'Play', exampleTitle]);
       audio.play();
     } else {
       audio.pause();
