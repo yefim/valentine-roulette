@@ -22,8 +22,9 @@ const SENT_TRACKING = `./sent-${YEAR}.txt`;
 // --- Clients ---
 
 const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN,
+  process.env.TWILIO_API_KEY,
+  process.env.TWILIO_API_SECRET,
+  { accountSid: process.env.TWILIO_ACCOUNT_SID },
 );
 
 const s3 = new S3Client({
@@ -161,7 +162,9 @@ async function assignValentines(year: string): Promise<Assignment[]> {
     // Pool exhausted — reshuffle all approved URLs and try again
     if (!assigned) {
       console.log(
-        chalk.yellow(`Pool exhausted, reshuffling. ${recipient} will get a duplicate voice note.`),
+        chalk.yellow(
+          `Pool exhausted, reshuffling. ${recipient} will get a duplicate voice note.`,
+        ),
       );
       pool = _.shuffle(approvedUrls);
 
@@ -439,7 +442,7 @@ async function uploadValentines(): Promise<void> {
 async function sendSingleValentine(to: string, url: string): Promise<unknown> {
   return client.messages.create({
     body: copy,
-    from: '+12294083291',
+    from: process.env.TWILIO_FROM_NUMBER,
     mediaUrl: [url],
     to: `+1${to}`,
   });
@@ -524,7 +527,7 @@ async function remindOldUsers() {
     try {
       await client.messages.create({
         body: reminderCopy,
-        from: '+12294083291',
+        from: process.env.TWILIO_FROM_NUMBER,
         to: `+1${to}`,
       });
 
@@ -551,8 +554,6 @@ async function main(): Promise<void> {
     ),
   );
 
-  return;
-
   // Step 2a: Download approved voice notes from S3
   console.log(chalk.yellow('Step 2a: Downloading approved voice notes...'));
   await downloadValentines(YEAR);
@@ -567,6 +568,8 @@ async function main(): Promise<void> {
   console.log(chalk.yellow('Step 2c: Uploading transcoded videos to S3...'));
   await uploadValentines();
   console.log(chalk.green('Uploads complete.\n'));
+
+  return;
 
   // Step 3: Send valentines via SMS
   console.log(chalk.yellow('Step 3: Sending valentines via SMS...'));
