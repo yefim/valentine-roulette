@@ -5,7 +5,11 @@ import twilio from 'twilio';
 import _ from 'lodash';
 import fs from 'fs';
 import { Readable } from 'stream';
-import { S3Client, HeadObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import {
+  S3Client,
+  HeadObjectCommand,
+  GetObjectCommand,
+} from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import Airtable from 'airtable';
 
@@ -156,6 +160,9 @@ async function assignValentines(year: string): Promise<Assignment[]> {
 
     // Pool exhausted — reshuffle all approved URLs and try again
     if (!assigned) {
+      console.log(
+        chalk.yellow(`Pool exhausted, reshuffling. ${recipient} will get a duplicate voice note.`),
+      );
       pool = _.shuffle(approvedUrls);
 
       for (let i = 0; i < pool.length; i++) {
@@ -544,6 +551,8 @@ async function main(): Promise<void> {
     ),
   );
 
+  return;
+
   // Step 2a: Download approved voice notes from S3
   console.log(chalk.yellow('Step 2a: Downloading approved voice notes...'));
   await downloadValentines(YEAR);
@@ -558,8 +567,6 @@ async function main(): Promise<void> {
   console.log(chalk.yellow('Step 2c: Uploading transcoded videos to S3...'));
   await uploadValentines();
   console.log(chalk.green('Uploads complete.\n'));
-
-  return;
 
   // Step 3: Send valentines via SMS
   console.log(chalk.yellow('Step 3: Sending valentines via SMS...'));
