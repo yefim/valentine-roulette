@@ -7,3 +7,8 @@ node_modules/
 .netlify
 
 .env
+.DS_Store
+scripts/notes/
+scripts/transcodes/
+scripts/assignments-*.csv
+scripts/sent-*.txt
