@@ -4,7 +4,9 @@ import ffmpeg from 'fluent-ffmpeg';
 import twilio from 'twilio';
 import _ from 'lodash';
 import fs from 'fs';
-import AWS from 'aws-sdk';
+import { Readable } from 'stream';
+import { S3Client, HeadObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
 import Airtable from 'airtable';
 
 // --- Config ---
@@ -20,12 +22,13 @@ const client = twilio(
   process.env.TWILIO_AUTH_TOKEN,
 );
 
-AWS.config.update({
-  accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY,
+const s3 = new S3Client({
   region: 'us-east-1',
+  credentials: {
+    accessKeyId: process.env.VDAY_AWS_ACCESS_KEY_ID ?? '',
+    secretAccessKey: process.env.VDAY_AWS_SECRET_ACCESS_KEY ?? '',
+  },
 });
-const s3 = new AWS.S3();
 
 Airtable.configure({
   endpointUrl: 'https://api.airtable.com',
@@ -249,8 +252,8 @@ async function downloadValentines(year: string): Promise<void> {
         Key: fullFilename,
       };
 
-      await s3.headObject(params).promise();
-      const readStream = s3.getObject(params).createReadStream();
+      const response = await s3.send(new GetObjectCommand(params));
+      const readStream = response.Body as Readable;
       const writeStream = fs.createWriteStream(destination);
 
       await new Promise<void>((resolve, reject) => {
@@ -388,19 +391,18 @@ async function uploadValentines(): Promise<void> {
   for (const file of files) {
     if (file.split('.').at(-1) !== 'mp4') continue;
 
-    const exists = await s3
-      .headObject({
-        Bucket: 'valentine-roulette-converted',
-        Key: file,
-      })
-      .promise()
-      .then(
-        () => true,
-        (err: any) => {
-          if (err.code === 'NotFound') return false;
-          throw err;
-        },
+    let exists = false;
+    try {
+      await s3.send(
+        new HeadObjectCommand({
+          Bucket: 'valentine-roulette-converted',
+          Key: file,
+        }),
       );
+      exists = true;
+    } catch (_e) {
+      // Not found — proceed to upload
+    }
 
     if (exists) {
       console.log(chalk.yellow(`Skipping ${file} (already uploaded)`));
@@ -409,14 +411,16 @@ async function uploadValentines(): Promise<void> {
 
     console.log(chalk.green(`Uploading ${file}...`));
     const content = fs.readFileSync(`./transcodes/${file}`);
-    await s3
-      .upload({
+    const upload = new Upload({
+      client: s3,
+      params: {
         Bucket: 'valentine-roulette-converted',
         Key: file,
         Body: content,
         ContentType: 'video/mp4',
-      })
-      .promise();
+      },
+    });
+    await upload.done();
     uploaded++;
   }
 

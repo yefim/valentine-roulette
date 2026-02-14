@@ -11,8 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.990.0",
+    "@aws-sdk/lib-storage": "^3.990.0",
     "airtable": "0.12.2",
-    "aws-sdk": "2.1315.0",
     "chalk": "^5.6.2",
     "dotenv": "^17.3.1",
     "fluent-ffmpeg": "2.1.2",
