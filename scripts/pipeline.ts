@@ -444,7 +444,7 @@ async function sendSingleValentine(to: string, url: string): Promise<unknown> {
     body: copy,
     from: process.env.TWILIO_FROM_NUMBER,
     mediaUrl: [url],
-    to: `+1${to}`,
+    to,
   });
 }
 
@@ -568,8 +568,6 @@ async function main(): Promise<void> {
   console.log(chalk.yellow('Step 2c: Uploading transcoded videos to S3...'));
   await uploadValentines();
   console.log(chalk.green('Uploads complete.\n'));
-
-  return;
 
   // Step 3: Send valentines via SMS
   console.log(chalk.yellow('Step 3: Sending valentines via SMS...'));
