@@ -246,16 +246,9 @@
             </p>
           </div>
           <div>
-            <h3>Can I submit more than one voice note?</h3>
-            <p>
-              Yes! The more, the merrier! You're still only getting one back
-              though.
-            </p>
-          </div>
-          <div>
             <h3>What's the deadline?</h3>
             <p>
-              Submissions close at noon ET on 2/14. You’ll receive a voice note
+              Submissions close at 4pm ET on 2/14. You’ll receive a voice note
               valentine around 6pm ET.
             </p>
           </div>
@@ -288,7 +281,8 @@
       }
 
       document.querySelector('.share-button').addEventListener('click', (e) => {
-        window._paq && _paq.push(['trackEvent', 'Share', 'Invite Click', 'Home']);
+        window._paq &&
+          _paq.push(['trackEvent', 'Share', 'Invite Click', 'Home']);
         if (!navigator.share) return;
 
         navigator
