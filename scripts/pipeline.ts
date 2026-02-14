@@ -58,7 +58,7 @@ interface Assignment {
 // --- Constants ---
 
 const copy =
-  "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. Love, The Voice Note Valentine Team";
+  "Happy Valentine's Day! Here's a little something to make you smile, courtesy of a random stranger. <3 - valentine voice note";
 
 const copy2 =
   "Here's a day-late dose of love. Please accept Cupid's apology for running behind. But, hey, love doesn't end after Feb 14! <3 The Voice Note Valentine Team";
@@ -109,9 +109,10 @@ async function fetchAllRecords(
 
 // --- Step 1: Assign voice notes to recipients ---
 
-async function assignValentines(year: string): Promise<Assignment[]> {
-  const allRecords = await fetchAllRecords(year);
-
+async function assignValentines(
+  year: string,
+  allRecords: VRecord[],
+): Promise<Assignment[]> {
   const recipients = new Set<string>();
   const approvedUrls: string[] = [];
   const senderUrls: { [sender: string]: string[] } = {};
@@ -230,6 +231,35 @@ function readAssignmentsCsv(filePath: string): Assignment[] {
       voiceNoteUrl: urlParts.join(','),
     };
   });
+}
+
+async function ensureAssignmentsCsv(
+  year: string,
+  csvPath: string,
+): Promise<void> {
+  const allRecords = await fetchAllRecords(year);
+  const recipientCount = new Set(allRecords.map((r) => r.sender)).size;
+
+  if (fs.existsSync(csvPath)) {
+    const existingCount = readAssignmentsCsv(csvPath).length;
+    if (existingCount === recipientCount) {
+      console.log(
+        chalk.yellow(
+          `Assignments CSV already has ${existingCount} recipients, skipping.\n`,
+        ),
+      );
+      return;
+    }
+    console.log(
+      `Recipient count changed (${existingCount} → ${recipientCount}), regenerating...`,
+    );
+  }
+
+  const assignments = await assignValentines(year, allRecords);
+  writeAssignmentsCsv(assignments, csvPath);
+  console.log(
+    chalk.green(`Wrote ${assignments.length} assignments to ${csvPath}\n`),
+  );
 }
 
 // --- Step 2a: Download approved voice notes ---
@@ -546,13 +576,7 @@ async function main(): Promise<void> {
 
   // Step 1: Assign voice notes to recipients
   console.log(chalk.yellow('Step 1: Assigning voice notes to recipients...'));
-  const assignments = await assignValentines(YEAR);
-  writeAssignmentsCsv(assignments, ASSIGNMENTS_CSV);
-  console.log(
-    chalk.green(
-      `Wrote ${assignments.length} assignments to ${ASSIGNMENTS_CSV}\n`,
-    ),
-  );
+  await ensureAssignmentsCsv(YEAR, ASSIGNMENTS_CSV);
 
   // Step 2a: Download approved voice notes from S3
   console.log(chalk.yellow('Step 2a: Downloading approved voice notes...'));
