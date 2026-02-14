@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node pipeline.ts",
+    "start": "npx tsx pipeline.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,9 +14,9 @@
     "airtable": "0.12.2",
     "aws-sdk": "2.1315.0",
     "chalk": "4.1.2",
+    "dotenv": "^17.3.1",
     "fluent-ffmpeg": "2.1.2",
     "lodash": "4.17.23",
-    "ts-node": "10.9.2",
     "twilio": "4.7.2"
   },
   "devDependencies": {
