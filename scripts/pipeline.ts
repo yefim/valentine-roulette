@@ -525,10 +525,10 @@ async function sendValentinesFromCsv(
           `[${count}/${toSend.length}] Sent ${mp4Name} to ${assignment.recipient}`,
         ),
       );
-    } catch (e) {
+    } catch (e: any) {
       console.log(
         chalk.red(
-          `[${count}/${toSend.length}] Failed to send to ${assignment.recipient}`,
+          `[${count}/${toSend.length}] Failed to send to ${assignment.recipient}: ${e.message} (code: ${e.code ?? 'unknown'})`,
         ),
       );
     }
