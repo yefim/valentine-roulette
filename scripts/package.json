@@ -18,7 +18,7 @@
     "dotenv": "^17.3.1",
     "fluent-ffmpeg": "2.1.2",
     "lodash": "4.17.23",
-    "twilio": "4.7.2"
+    "twilio": "5.13.1"
   },
   "devDependencies": {
     "@types/fluent-ffmpeg": "2.1.24",
